@@ -89,5 +89,47 @@ fun topBarFun() {
 @Composable
 fun bottomBarFun() {
 
+    Surface (
+        color = Color(0xFFFF66BA),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(64.dp)
 
+    ) {
+        Row (
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(start = 15.dp, end = 15.dp)
+        ){
+            Icon(
+                painter = painterResource(id = R.drawable.home),
+                contentDescription = "Ícone da casa/tela inicial",
+                tint = Color.Unspecified,
+                modifier = Modifier.height(30.dp)
+            )
+            Icon(
+                painter = painterResource(id = R.drawable.sinos__1_),
+                contentDescription = "Ícone de noificações",
+                tint = Color.Unspecified,
+                modifier = Modifier.height(30.dp)
+            )
+            Icon(painter = painterResource(id = R.drawable.icone_adicao__2_),
+                contentDescription = "Ícone de adição de post",
+                tint = Color.Unspecified,
+                modifier = Modifier.height(55.dp)
+                )
+            Icon(
+                painter = painterResource(id = R.drawable.icone_comentarios),
+                contentDescription = "Ícone de conversas",
+                tint = Color.Unspecified,
+                modifier = Modifier.height(30.dp)
+            )
+            Icon(
+                painter = painterResource(id = R.drawable.image_usuario),
+                contentDescription = "Ícone do usuário",
+                tint = Color.Unspecified,
+                modifier = Modifier.height(30.dp)
+            )
+        }
+    }
 }
