@@ -25,11 +25,15 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.NavController
 
+val aksharFont = FontFamily(Font(R.font.akshar))
 @Composable
 fun PaginaInicial(navController: NavController) {
     Box(
@@ -104,15 +108,23 @@ fun PaginaInicial(navController: NavController) {
                     text = "WELCOME",
                     color = Color(0xFFFF66BA),
                     style = androidx.compose.ui.text.TextStyle(
-                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                        fontSize = 28.sp
+                        fontFamily = aksharFont,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 30.sp
                     )
                 )
+
+                Spacer(modifier = Modifier.height(15.dp))
+
                 Text(
                     text = "Segredos não são guardados...\nsão usados",
-                    color = Color(0xFFC24688), // Rosa mais escuro para leitura no branco
-                    fontSize = 17.sp
+                    color = Color(0xFFC03582), // Rosa mais escuro para leitura no branco
+                    fontSize = 21.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 32.sp
                 )
+
+                Spacer(modifier = Modifier.height(30.dp))
 
                 // Botão Continue
                 Row(
@@ -124,15 +136,15 @@ fun PaginaInicial(navController: NavController) {
                 ) {
                     Text(
                         text = "continue",
-                        color = Color(0xFFFF66BA),
-                        fontSize = 18.sp,
+                        color = Color(0xFFFF46AC),
+                        fontSize = 22.sp,
                         fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     // Se você tiver o ícone da seta no círculo, use aqui
                     Image(
                         painter = painterResource(id = R.drawable.seta), // Substitua pelo ícone da seta
-                        modifier = Modifier.size(28.dp).rotate(180f), // Rotação apenas se usar a lua como teste
+                        modifier = Modifier.size(30.dp), // Rotação apenas se usar a lua como teste
                         contentDescription = null
                     )
                 }
