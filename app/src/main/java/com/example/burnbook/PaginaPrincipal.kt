@@ -1,7 +1,9 @@
 package com.example.burnbook
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,7 +11,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -41,10 +47,21 @@ fun PaginaPrincipal () {
     ) {
         // Box principal
         innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
-            // Conteúdo da página...
+        Box(
+            modifier = Modifier
+                .fillMaxSize() // Isso garante que o rosa preencha a tela toda
+                .background(Color(0xFFFF46AC))
+                .padding(innerPadding)
+        ) {
+            LazyColumn (
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp), // Espaço nas bordas
+                verticalArrangement = Arrangement.spacedBy(16.dp) // Espaço entre os cards
+            ){
+                items(3) { cardPost() }
+            }
 
-    }
+        }
     }
 }
 
@@ -56,7 +73,7 @@ fun topBarFun() {
         color = Color(0xFFFF66BA),
         modifier = Modifier
             .fillMaxWidth()
-            .height(64.dp)
+            .height(70.dp)
 
     ) {
         Row (
@@ -130,6 +147,106 @@ fun bottomBarFun() {
                 tint = Color.Unspecified,
                 modifier = Modifier.height(30.dp)
             )
+        }
+    }
+}
+@Composable
+fun cardPost () {
+    Surface (
+        color = Color.White,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(315.dp),
+        shape = RoundedCornerShape(10.dp)
+    ){
+        Column (
+            modifier = Modifier
+                .fillMaxWidth()
+        ){
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 16.dp, top = 8.dp)
+                    .fillMaxWidth()
+            ) {
+
+                Row {
+
+                    Icon(
+                        painter = painterResource(id = R.drawable.image_usuario),
+                        contentDescription = "Ícone do usuário",
+                        tint = Color.Unspecified,
+                        modifier = Modifier
+                            .height(30.dp)
+                            .padding(end = 8.dp)
+                    )
+
+                    Text(
+                        text = "Título",
+                        fontSize = 20.sp
+                    )
+                }
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+
+                    Icon(
+                        painter = painterResource(id = R.drawable.icone_gostei),
+                        contentDescription = "Ícone de gostei/like",
+                        tint = Color.Unspecified,
+                        modifier = Modifier.height(40.dp)
+                    )
+
+                    Text(
+                        text = "01",
+                        fontSize = 15.sp,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+
+                    Icon(
+                        painter = painterResource(id = R.drawable.icone_comentarios),
+                        contentDescription = "Ícone de comentários",
+                        tint = Color.Unspecified,
+                        modifier = Modifier.height(25.dp)
+                    )
+
+                }
+            }
+            HorizontalDivider(
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .fillMaxWidth(),
+                thickness = 1.dp, // Grossura da linha
+                color = Color.LightGray
+            )
+
+            Text(
+                text = "11/10/2025",
+                modifier = Modifier
+                    .padding(horizontal = 16.dp),
+                fontSize = 14.sp
+            )
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(210.dp)
+                    .padding(end = 16.dp, start = 16.dp),
+                color = Color(0xFFF0F0F0),
+                shape = RoundedCornerShape(bottomEnd = 10.dp, bottomStart = 10.dp)
+
+            ) {
+                Text(
+                    text = "Lorem Ipsum is simply dummy text of the printing and typesetting " +
+                        "industry. Lorem Ipsum has been the industry's standard dummy text ever " +
+                        "since the 1500s, when an unknown printer took a galley of type and " +
+                        "scrambled it to make a type specimen book.",
+                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp)
+                )
+            }
         }
     }
 }
