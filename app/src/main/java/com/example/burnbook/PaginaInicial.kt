@@ -2,27 +2,17 @@ package com.example.burnbook
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -32,30 +22,32 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.NavController
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 
 val aksharFont = FontFamily(Font(R.font.akshar))
+
 @Composable
 fun PaginaInicial(navController: NavController) {
+    var isDarkMode by remember { mutableStateOf(false) }
+
+    val corDaOndaETitulo = if (isDarkMode) Color.Black else Color.White
+    val iconeTopo = if (isDarkMode) R.drawable.sol else R.drawable.lua
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFF66BA)) // Fundo rosa
+            .background(Color(0xFFFF66BA))
     ) {
-
-        // --- 1. DESENHO DA ONDA (EFEITO TOBOGÃ) ---
+        // --- 1. DESENHO DA ONDA ---
         androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
             val path = android.graphics.Path().apply {
-                // Início: Um pouco acima do meio na lateral esquerda
                 moveTo(0f, size.height * 0.45f)
-
-                // cubicTo(control1X, control1Y, control2X, control2Y, endX, endY)
                 cubicTo(
-                    size.width * 0.3f, size.height * 0.45f, // Mantém o topo no início
-                    size.width * 0.4f, size.height * 0.85f, // Desce rápido para criar a rampa
-                    size.width, size.height * 0.75f         // Termina na direita mais embaixo
+                    size.width * 0.3f, size.height * 0.45f,
+                    size.width * 0.4f, size.height * 0.85f,
+                    size.width, size.height * 0.75f
                 )
-
-                // Fecha o desenho para preencher o fundo de branco
                 lineTo(size.width, size.height)
                 lineTo(0f, size.height)
                 close()
@@ -63,7 +55,7 @@ fun PaginaInicial(navController: NavController) {
 
             drawIntoCanvas { canvas ->
                 val paint = android.graphics.Paint().apply {
-                    color = android.graphics.Color.WHITE
+                    color = corDaOndaETitulo.toArgb()
                     style = android.graphics.Paint.Style.FILL
                     isAntiAlias = true
                 }
@@ -71,37 +63,35 @@ fun PaginaInicial(navController: NavController) {
             }
         }
 
-
-        // --- 2. CONTEÚDO ---
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // MANTIDO SEU SPACER ORIGINAL
             Spacer(modifier = Modifier.height(30.dp))
 
-            // Lua
+            // Botão de troca de modo
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                Image(
-                    painter = painterResource(id = R.drawable.lua),
-                    contentDescription = null,
-                    modifier = Modifier.size(50.dp)
-                )
+                IconButton(onClick = { isDarkMode = !isDarkMode }) {
+                    Image(
+                        painter = painterResource(id = iconeTopo),
+                        contentDescription = "Trocar modo",
+                        modifier = Modifier.size(50.dp)
+                    )
+                }
             }
 
+            // MANTIDO SEU SPACER ORIGINAL
             Spacer(modifier = Modifier.height(180.dp))
 
-            // Título
-            BurnBookTitle()
+            // Título (Agora enviando a cor correta)
+            BurnBookTitle(corTexto = corDaOndaETitulo)
 
+            // MANTIDO SEU PESO ORIGINAL
             Spacer(modifier = Modifier.weight(1f))
 
-            // Seção de textos sobre o branco
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 10.dp, bottom = 40.dp),
+                modifier = Modifier.fillMaxWidth().padding(start = 10.dp, bottom = 40.dp),
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
@@ -118,7 +108,8 @@ fun PaginaInicial(navController: NavController) {
 
                 Text(
                     text = "Segredos não são guardados...\nsão usados",
-                    color = Color(0xFFC03582), // Rosa mais escuro para leitura no branco
+                    // APENAS MUDANÇA DE COR NO MODO ESCURO
+                    color = if (isDarkMode) Color(0xFFFED9ED) else Color(0xFFC03582),
                     fontSize = 21.sp,
                     fontWeight = FontWeight.Bold,
                     lineHeight = 32.sp
@@ -126,26 +117,24 @@ fun PaginaInicial(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(30.dp))
 
-                // Botão Continue
+                // BOTÃO CONTINUE ORIGINAL (MANTIDO)
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp, end = 10.dp),
+                    modifier = Modifier.fillMaxWidth().padding(top = 20.dp, end = 10.dp),
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = "continue",
-                        color = Color(0xFFFF46AC),
+                        color = if (isDarkMode) Color.Black else Color(0xFFFF46AC),
                         fontSize = 22.sp,
-                        fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    // Se você tiver o ícone da seta no círculo, use aqui
                     Image(
-                        painter = painterResource(id = R.drawable.seta), // Substitua pelo ícone da seta
-                        modifier = Modifier.size(30.dp), // Rotação apenas se usar a lua como teste
-                        contentDescription = null
+                        painter = painterResource(id = R.drawable.seta),
+                        modifier = Modifier.size(30.dp),
+                        contentDescription = null,
+                        colorFilter = if (isDarkMode) ColorFilter.tint(Color.Black) else null
                     )
                 }
             }
@@ -154,54 +143,34 @@ fun PaginaInicial(navController: NavController) {
 }
 
 @Composable
-fun BurnBookTitle() {
+fun BurnBookTitle(corTexto: Color) {
     val context = LocalContext.current
     val customTypeface = ResourcesCompat.getFont(context, R.font.kaisei_harunoumi)
 
     androidx.compose.foundation.Canvas(
         modifier = Modifier
             .width(330.dp)
-            .height(300.dp)
+            .height(180.dp) // <--- ÚNICA MUDANÇA DE ESTRUTURA: Reduzi a caixa invisível para liberar espaço
     ) {
         val paint = android.graphics.Paint().apply {
             isAntiAlias = true
             textSize = 165f
-            color = android.graphics.Color.WHITE
+            color = corTexto.toArgb() // Usa a cor que vem da função principal
             typeface = customTypeface
             textAlign = android.graphics.Paint.Align.CENTER
         }
 
         val canvasWidth = size.width
-
         val pathBurn = android.graphics.Path().apply {
-            addArc(
-                android.graphics.RectF(-10f, 0f, canvasWidth / 2 + 100f, 300f),
-                180f,
-                180f
-            )
+            addArc(android.graphics.RectF(-10f, 0f, canvasWidth / 2 + 100f, 300f), 180f, 180f)
         }
-
         val pathBook = android.graphics.Path().apply {
-            addArc(
-                android.graphics.RectF(canvasWidth / 2 - 100f, 120f, canvasWidth + 10f, 420f),
-                180f,
-                -180f
-            )
+            addArc(android.graphics.RectF(canvasWidth / 2 - 100f, 120f, canvasWidth + 10f, 420f), 180f, -180f)
         }
 
         drawIntoCanvas { canvas ->
-            // --- DISTÂNCIA DO BURN ---
-            // O último parâmetro (0f) é o vOffset.
-            // Se colocar ex: 40f, ele desce o BURN em direção ao BOOK.
             canvas.nativeCanvas.drawTextOnPath("B U R N", pathBurn, 0f, 0f, paint)
-
-            // --- DISTÂNCIA DO BOOK ---
-            // O último parâmetro (30f) é o vOffset.
-            // Diminuir para 10f ou usar valores negativos (ex: -20f)
-            // faz o BOOK "subir" e grudar mais no BURN.
             canvas.nativeCanvas.drawTextOnPath("B O O K", pathBook, 0f, 20f, paint)
         }
     }
 }
-
-//modificar a font do regular e deixar medium (arquivos)
