@@ -26,6 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -73,7 +75,7 @@ fun topBarFun() {
         color = Color(0xFFFF66BA),
         modifier = Modifier
             .fillMaxWidth()
-            .height(70.dp)
+            .height(100.dp)
 
     ) {
         Row (
@@ -87,11 +89,24 @@ fun topBarFun() {
                 modifier = Modifier.height(40.dp)
             )
 
-            // Arrumar a fonte
-            Text(text = "Burn Book",
-                color = Color.White,
-                fontSize = 20.sp
+            Column (
+                verticalArrangement = Arrangement.spacedBy((-18).dp)
+            ){
+
+                Text(
+                    text = "Burn",
+                    color = Color.White,
+                    fontSize = 30.sp,
+                    fontFamily = JustMeFont
                 )
+
+                Text(
+                    text = "BOOK",
+                    color = Color.White,
+                    fontSize = 30.sp,
+                    fontFamily = JaquesShadow
+                )
+            }
 
             Icon(painter = painterResource(id = R.drawable.image_usuario),
                 contentDescription = "Foto de perfil do usuário",
@@ -185,7 +200,8 @@ fun cardPost () {
 
                     Text(
                         text = "Título",
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
+                        fontFamily = CinzelBold
                     )
                 }
 
@@ -204,7 +220,8 @@ fun cardPost () {
                     Text(
                         text = "01",
                         fontSize = 15.sp,
-                        modifier = Modifier.padding(end = 8.dp)
+                        modifier = Modifier.padding(end = 8.dp),
+                        fontFamily = CinzelBold
                     )
 
                     Icon(
@@ -228,7 +245,8 @@ fun cardPost () {
                 text = "11/10/2025",
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
-                fontSize = 14.sp
+                fontSize = 14.sp,
+                fontFamily = CinzelBold
             )
             Surface(
                 modifier = Modifier
@@ -250,3 +268,10 @@ fun cardPost () {
         }
     }
 }
+
+val JustMeFont = FontFamily(Font(R.font.justmeagaindownhere_regular))
+
+val JaquesShadow = FontFamily(Font(R.font.jacquesfrancoisshadow_regular))
+
+val Cinzel = FontFamily(Font(R.font.cinzel))
+val CinzelBold = FontFamily(Font(R.font.cinzel_bold))
