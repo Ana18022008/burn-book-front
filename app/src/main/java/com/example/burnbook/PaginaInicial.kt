@@ -72,7 +72,8 @@ fun PaginaInicial(navController: NavController) {
 
             // Botão de troca de modo
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                IconButton(onClick = { isDarkMode = !isDarkMode }) {
+                IconButton(onClick = { isDarkMode = !isDarkMode },
+                    modifier = Modifier.size(50.dp)) {
                     Image(
                         painter = painterResource(id = iconeTopo),
                         contentDescription = "Trocar modo",
@@ -125,8 +126,8 @@ fun PaginaInicial(navController: NavController) {
                 ) {
                     Text(
                         text = "continue",
-                        color = if (isDarkMode) Color.Black else Color(0xFFFF46AC),
-                        fontSize = 22.sp,
+                        color = if (isDarkMode) Color.White else Color(0xFFFF46AC),
+                        fontSize = 24.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -134,7 +135,7 @@ fun PaginaInicial(navController: NavController) {
                         painter = painterResource(id = R.drawable.seta),
                         modifier = Modifier.size(30.dp),
                         contentDescription = null,
-                        colorFilter = if (isDarkMode) ColorFilter.tint(Color.Black) else null
+                        colorFilter = if (isDarkMode) ColorFilter.tint(Color.White) else null
                     )
                 }
             }
@@ -150,12 +151,12 @@ fun BurnBookTitle(corTexto: Color) {
     androidx.compose.foundation.Canvas(
         modifier = Modifier
             .width(330.dp)
-            .height(180.dp) // <--- ÚNICA MUDANÇA DE ESTRUTURA: Reduzi a caixa invisível para liberar espaço
+            .height(180.dp)
     ) {
         val paint = android.graphics.Paint().apply {
             isAntiAlias = true
             textSize = 165f
-            color = corTexto.toArgb() // Usa a cor que vem da função principal
+            color = corTexto.toArgb()
             typeface = customTypeface
             textAlign = android.graphics.Paint.Align.CENTER
         }
