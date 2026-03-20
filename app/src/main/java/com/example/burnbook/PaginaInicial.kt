@@ -2,6 +2,7 @@ package com.example.burnbook
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -39,7 +40,7 @@ fun PaginaInicial(navController: NavController) {
             .fillMaxSize()
             .background(Color(0xFFFF66BA))
     ) {
-        // --- 1. DESENHO DA ONDA ---
+
         androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
             val path = android.graphics.Path().apply {
                 moveTo(0f, size.height * 0.45f)
@@ -67,10 +68,10 @@ fun PaginaInicial(navController: NavController) {
             modifier = Modifier.fillMaxSize().padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // MANTIDO SEU SPACER ORIGINAL
+
             Spacer(modifier = Modifier.height(30.dp))
 
-            // Botão de troca de modo
+
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                 IconButton(onClick = { isDarkMode = !isDarkMode },
                     modifier = Modifier.size(50.dp)) {
@@ -82,13 +83,13 @@ fun PaginaInicial(navController: NavController) {
                 }
             }
 
-            // MANTIDO SEU SPACER ORIGINAL
+
             Spacer(modifier = Modifier.height(180.dp))
 
-            // Título (Agora enviando a cor correta)
+
             BurnBookTitle(corTexto = corDaOndaETitulo)
 
-            // MANTIDO SEU PESO ORIGINAL
+
             Spacer(modifier = Modifier.weight(1f))
 
             Column(
@@ -100,7 +101,7 @@ fun PaginaInicial(navController: NavController) {
                     color = Color(0xFFFF66BA),
                     style = androidx.compose.ui.text.TextStyle(
                         fontFamily = aksharFont,
-                        fontWeight = FontWeight.ExtraBold,
+                        fontWeight = FontWeight.Light,
                         fontSize = 30.sp
                     )
                 )
@@ -109,7 +110,7 @@ fun PaginaInicial(navController: NavController) {
 
                 Text(
                     text = "Segredos não são guardados...\nsão usados",
-                    // APENAS MUDANÇA DE COR NO MODO ESCURO
+
                     color = if (isDarkMode) Color(0xFFFED9ED) else Color(0xFFC03582),
                     fontSize = 21.sp,
                     fontWeight = FontWeight.Bold,
@@ -118,9 +119,10 @@ fun PaginaInicial(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(30.dp))
 
-                // BOTÃO CONTINUE ORIGINAL (MANTIDO)
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(top = 20.dp, end = 10.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp, end = 10.dp),
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -131,12 +133,21 @@ fun PaginaInicial(navController: NavController) {
                         fontWeight = FontWeight.SemiBold
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Image(
-                        painter = painterResource(id = R.drawable.seta),
-                        modifier = Modifier.size(30.dp),
-                        contentDescription = null,
-                        colorFilter = if (isDarkMode) ColorFilter.tint(Color.White) else null
-                    )
+
+
+                    IconButton(
+                        onClick = {
+                            navController.navigate("principal")
+                        },
+                        modifier = Modifier.size(40.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.seta),
+                            modifier = Modifier.size(30.dp),
+                            contentDescription = null,
+                            colorFilter = if (isDarkMode) ColorFilter.tint(Color.White) else null
+                        )
+                    }
                 }
             }
         }
