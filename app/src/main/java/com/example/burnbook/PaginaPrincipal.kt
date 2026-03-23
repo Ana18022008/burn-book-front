@@ -1,5 +1,6 @@
 package com.example.burnbook
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,17 +12,24 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,16 +42,22 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PaginaPrincipal () {
+
+    var isDarkMode by remember { mutableStateOf(false) }
+
     Scaffold (
 
         // Barra Superior
         topBar = {
-            topBarFun()
+            topBarFun(
+                isDarkMode = isDarkMode,
+                onToggle = { isDarkMode = !isDarkMode }
+            )
         },
 
         // Barra inferior
         bottomBar = {
-            bottomBarFun()
+            bottomBarFun(isDarkMode)
         },
 
     ) {
@@ -51,16 +65,18 @@ fun PaginaPrincipal () {
         innerPadding ->
         Box(
             modifier = Modifier
-                .fillMaxSize() // Isso garante que o rosa preencha a tela toda
-                .background(Color(0xFFFF46AC))
+                .fillMaxSize()
+                .background(
+                    if (isDarkMode) Color(0xFF2C2C2C) else Color(0xFFE6E6E6)
+                )
                 .padding(innerPadding)
         ) {
             LazyColumn (
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp), // Espaço nas bordas
-                verticalArrangement = Arrangement.spacedBy(16.dp) // Espaço entre os cards
+                verticalArrangement = Arrangement.spacedBy(30.dp) // Espaço entre os cards
             ){
-                items(3) { cardPost() }
+                items(3) { cardPost(isDarkMode) }
             }
 
         }
@@ -68,14 +84,17 @@ fun PaginaPrincipal () {
 }
 
 
-
 @Composable
-fun topBarFun() {
+fun topBarFun(isDarkMode: Boolean, onToggle: () -> Unit) {
+
+    val iconeTopo = if (isDarkMode) R.drawable.sol else R.drawable.lua_
+
+
     Surface (
-        color = Color(0xFFFF66BA),
+        color = if (isDarkMode) Color(0xFFC03582) else Color(0xFFFF66BA),
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
+            .height(80.dp)
 
     ) {
         Row (
@@ -83,15 +102,15 @@ fun topBarFun() {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(start = 15.dp, end = 15.dp)
         ) {
-            Icon(painter = painterResource(id = R.drawable.icone_burnbook),
-                contentDescription = "Ícone do Burn Book",
-                tint = Color.Unspecified,
-                modifier = Modifier.height(40.dp)
-            )
+//            Icon(painter = painterResource(id = R.drawable.icone_burnbook),
+//                contentDescription = "Ícone do Burn Book",
+//                tint = Color.Unspecified,
+//                modifier = Modifier.height(40.dp)
+//            )
 
             Column (
                 verticalArrangement = Arrangement.spacedBy((-18).dp)
-            ){
+            ) {
 
                 Text(
                     text = "Burn",
@@ -103,26 +122,32 @@ fun topBarFun() {
                 Text(
                     text = "BOOK",
                     color = Color.White,
-                    fontSize = 30.sp,
+                    fontSize = 25.sp,
                     fontFamily = JaquesShadow
                 )
-            }
 
-            Icon(painter = painterResource(id = R.drawable.image_usuario),
-                contentDescription = "Foto de perfil do usuário",
-                tint = Color.Unspecified,
-                modifier = Modifier.height(30.dp)
-            )
+            }
+            IconButton(
+                onClick = onToggle,
+                modifier = Modifier.size(50.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = iconeTopo),
+                    contentDescription = "Trocar modo",
+                    modifier = Modifier.size(35.dp)
+                )
+            }
 
         }
     }
 
 }
 @Composable
-fun bottomBarFun() {
+fun bottomBarFun(isDarkMode: Boolean) {
+
 
     Surface (
-        color = Color(0xFFFF66BA),
+        color = if (isDarkMode) Color(0xFFC03582) else Color(0xFFFF66BA),
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
@@ -166,7 +191,7 @@ fun bottomBarFun() {
     }
 }
 @Composable
-fun cardPost () {
+fun cardPost (isDarkMode: Boolean) {
     Surface (
         color = Color.White,
         modifier = Modifier
@@ -194,13 +219,13 @@ fun cardPost () {
                         contentDescription = "Ícone do usuário",
                         tint = Color.Unspecified,
                         modifier = Modifier
-                            .height(30.dp)
+                            .height(25.dp)
                             .padding(end = 8.dp)
                     )
 
                     Text(
                         text = "Título",
-                        fontSize = 20.sp,
+                        fontSize = 16.sp,
                         fontFamily = CinzelBold
                     )
                 }
@@ -214,7 +239,7 @@ fun cardPost () {
                         painter = painterResource(id = R.drawable.icone_gostei),
                         contentDescription = "Ícone de gostei/like",
                         tint = Color.Unspecified,
-                        modifier = Modifier.height(40.dp)
+                        modifier = Modifier.height(30.dp)
                     )
 
                     Text(
@@ -228,7 +253,7 @@ fun cardPost () {
                         painter = painterResource(id = R.drawable.icone_comentarios),
                         contentDescription = "Ícone de comentários",
                         tint = Color.Unspecified,
-                        modifier = Modifier.height(25.dp)
+                        modifier = Modifier.height(20.dp)
                     )
 
                 }
@@ -253,7 +278,7 @@ fun cardPost () {
                     .fillMaxWidth()
                     .height(210.dp)
                     .padding(end = 16.dp, start = 16.dp),
-                color = Color(0xFFF0F0F0),
+                color = if (isDarkMode) Color(0xFF2C2C2C) else Color(0xFFE6E6E6),
                 shape = RoundedCornerShape(bottomEnd = 10.dp, bottomStart = 10.dp)
 
             ) {
@@ -261,8 +286,11 @@ fun cardPost () {
                     text = "Lorem Ipsum is simply dummy text of the printing and typesetting " +
                         "industry. Lorem Ipsum has been the industry's standard dummy text ever " +
                         "since the 1500s, when an unknown printer took a galley of type and " +
-                        "scrambled it to make a type specimen book.",
-                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp)
+                        "scrambled it to make a type specimen book. Lorem Ipsum is simply dummy text" +
+                            " of the printing and typesetting industry.",
+                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp),
+                    color = if (isDarkMode) Color(0xFFE6E6E6) else Color(0xFF2C2C2C),
+                    fontSize = 15.sp
                 )
             }
         }
