@@ -153,13 +153,21 @@ fun cardPerfil (isDarkMode: Boolean, navController: NavController) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painter = painterResource(
-                    id = R.drawable.image_usuario
+            Button(
+                onClick = { /*TODO*/ },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent
                 ),
-                contentDescription = "Foto do usuário",
-                modifier = Modifier.padding(vertical = 24.dp)
-            )
+            ) {
+
+                Image(
+                    painter = painterResource(
+                        id = R.drawable.image_usuario
+                    ),
+                    contentDescription = "Foto do usuário",
+                    modifier = Modifier.padding(vertical = 24.dp)
+                )
+            }
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -185,7 +193,7 @@ fun cardPerfil (isDarkMode: Boolean, navController: NavController) {
                             Text(
                                 text = "Ana Beatriz de Oliveira Ribeiro Silva Jr.",
                                 fontFamily = Kadwa,
-                                color = Color.White,
+                                color = if (isDarkMode) Color.White else Color.Black,
                                 fontSize = 24.sp,
                                 modifier = Modifier
                                     .padding(bottom = 30.dp, start = 12.dp, end = 12.dp)
@@ -204,7 +212,11 @@ fun cardPerfil (isDarkMode: Boolean, navController: NavController) {
                                     fontSize = 24.sp,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .background(color = if (isDarkMode) Color(0xFF505050) else Color(0xFFE6E6E6)),
+                                        .background(
+                                            color = if (isDarkMode) Color(0xFF505050) else Color(
+                                                0xFFE6E6E6
+                                            )
+                                        ),
                                     textAlign = TextAlign.Center
                                 )
                             }
@@ -220,7 +232,11 @@ fun cardPerfil (isDarkMode: Boolean, navController: NavController) {
                                     fontFamily = Kadwa,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .background(color = if (isDarkMode) Color(0xFF505050) else Color(0xFFE6E6E6)),
+                                        .background(
+                                            color = if (isDarkMode) Color(0xFF505050) else Color(
+                                                0xFFE6E6E6
+                                            )
+                                        ),
                                     textAlign = TextAlign.Center
                                 )
                             }
@@ -236,7 +252,11 @@ fun cardPerfil (isDarkMode: Boolean, navController: NavController) {
                                     fontFamily = Kadwa,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .background(color = if (isDarkMode) Color(0xFF505050) else Color(0xFFE6E6E6)),
+                                        .background(
+                                            color = if (isDarkMode) Color(0xFF505050) else Color(
+                                                0xFFE6E6E6
+                                            )
+                                        ),
                                     textAlign = TextAlign.Center
                                 )
                             }
