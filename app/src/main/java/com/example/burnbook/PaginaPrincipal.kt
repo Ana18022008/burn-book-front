@@ -38,10 +38,11 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PaginaPrincipal () {
+fun PaginaPrincipal (navController: NavController) {
 
     var isDarkMode by remember { mutableStateOf(false) }
 
@@ -57,7 +58,7 @@ fun PaginaPrincipal () {
 
         // Barra inferior
         bottomBar = {
-            bottomBarFun(isDarkMode)
+            bottomBarFun(isDarkMode, navController)
         },
 
     ) {
@@ -134,7 +135,7 @@ fun topBarFun(isDarkMode: Boolean, onToggle: () -> Unit) {
                 Image(
                     painter = painterResource(id = iconeTopo),
                     contentDescription = "Trocar modo",
-                    modifier = Modifier.size(35.dp)
+                    modifier = Modifier.size(40.dp)
                 )
             }
 
@@ -143,7 +144,7 @@ fun topBarFun(isDarkMode: Boolean, onToggle: () -> Unit) {
 
 }
 @Composable
-fun bottomBarFun(isDarkMode: Boolean) {
+fun bottomBarFun(isDarkMode: Boolean, navController: NavController) {
 
 
     Surface (
@@ -181,12 +182,19 @@ fun bottomBarFun(isDarkMode: Boolean) {
                 tint = Color.Unspecified,
                 modifier = Modifier.height(30.dp)
             )
-            Icon(
-                painter = painterResource(id = R.drawable.image_usuario),
-                contentDescription = "Ícone do usuário",
-                tint = Color.Unspecified,
-                modifier = Modifier.height(30.dp)
-            )
+            IconButton(
+                onClick = {
+                    navController.navigate("usuario")
+                },
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.image_usuario),
+                    contentDescription = "Ícone do usuário",
+                    tint = Color.Unspecified,
+                    modifier = Modifier.height(30.dp)
+                )
+            }
+
         }
     }
 }
