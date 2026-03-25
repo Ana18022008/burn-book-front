@@ -67,7 +67,7 @@ fun PaginaPrincipal () {
             modifier = Modifier
                 .fillMaxSize()
                 .background(
-                    if (isDarkMode) Color(0xFF2C2C2C) else Color(0xFFE6E6E6)
+                    if (isDarkMode) Color(0xFF505050) else Color(0xFFE6E6E6)
                 )
                 .padding(innerPadding)
         ) {
@@ -91,7 +91,7 @@ fun topBarFun(isDarkMode: Boolean, onToggle: () -> Unit) {
 
 
     Surface (
-        color = if (isDarkMode) Color(0xFFC03582) else Color(0xFFFF66BA),
+        color = if (isDarkMode) Color(0xFFDE425C) else Color(0xFFF65B75),
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
@@ -147,7 +147,7 @@ fun bottomBarFun(isDarkMode: Boolean) {
 
 
     Surface (
-        color = if (isDarkMode) Color(0xFFC03582) else Color(0xFFFF66BA),
+        color = if (isDarkMode) Color(0xFFDE425C) else Color(0xFFF65B75),
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
@@ -273,7 +273,7 @@ fun cardPost (isDarkMode: Boolean) {
                     .fillMaxWidth()
                     .height(210.dp)
                     .padding(end = 16.dp, start = 16.dp),
-                color = if (isDarkMode) Color(0xFF2C2C2C) else Color(0xFFE6E6E6),
+                color = if (isDarkMode) Color(0xFF505050) else Color(0xFFE6E6E6),
                 shape = RoundedCornerShape(bottomEnd = 10.dp, bottomStart = 10.dp)
 
             ) {
@@ -284,7 +284,7 @@ fun cardPost (isDarkMode: Boolean) {
                         "scrambled it to make a type specimen book. Lorem Ipsum is simply dummy text" +
                             " of the printing and typesetting industry.",
                     modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp),
-                    color = if (isDarkMode) Color(0xFFE6E6E6) else Color(0xFF2C2C2C),
+                    color = if (isDarkMode) Color.White else Color(0xFF2C2C2C),
                     fontSize = 15.sp
                 )
             }
