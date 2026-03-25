@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = "inicial"
+                    startDestination = "usuario"
                 ) {
 
                     composable("inicial") {
