@@ -24,7 +24,3 @@ fun PaginaCadastro(navController: NavController){
 
 }
 
-@Composable
-fun topBarFun(isDarkMode: Boolean, onToggle: () -> Unit){
-
-}
