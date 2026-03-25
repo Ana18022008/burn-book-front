@@ -223,11 +223,6 @@ fun cardPost (isDarkMode: Boolean) {
                             .padding(end = 8.dp)
                     )
 
-                    Text(
-                        text = "Título",
-                        fontSize = 16.sp,
-                        fontFamily = CinzelBold
-                    )
                 }
 
                 Row(
