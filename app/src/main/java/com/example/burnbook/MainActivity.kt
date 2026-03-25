@@ -1,6 +1,4 @@
 package com.example.burnbook
-
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.burnbook.ui.theme.BurnBookTheme
 import androidx.navigation.compose.*
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 
 
 class MainActivity : ComponentActivity() {
@@ -22,26 +22,35 @@ class MainActivity : ComponentActivity() {
             BurnBookTheme {
                 val navController = rememberNavController()
 
-
                 NavHost(
                     navController = navController,
                     startDestination = "inicial"
                 ) {
 
-
                     composable("inicial") {
-                       PaginaPrincipal()
+                        PaginaInicial(navController)
                     }
-
 
                     composable("principal") {
                         PaginaPrincipal()
                     }
+
+                    composable("cadastro"){
+                        PaginaCadastro(navController)
+                    }
+
+                    composable("login"){
+                        PaginaLogin()
+                    }
+
+
                 }
+
             }
         }
     }
-}
+    }
+
 
 
 
