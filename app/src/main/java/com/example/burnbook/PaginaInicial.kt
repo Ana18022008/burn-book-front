@@ -38,7 +38,7 @@ fun PaginaInicial(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFF66BA))
+            .background(Color(0xFFE0F65B75))
     ) {
 
         androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
@@ -98,7 +98,7 @@ fun PaginaInicial(navController: NavController) {
             ) {
                 Text(
                     text = "WELCOME",
-                    color = Color(0xFFFF66BA),
+                    color = Color(0xFFFF667F),
                     style = androidx.compose.ui.text.TextStyle(
                         fontFamily = aksharFont,
                         fontWeight = FontWeight.Light,
@@ -110,9 +110,9 @@ fun PaginaInicial(navController: NavController) {
 
                 Text(
                     text = "Segredos não são guardados...\nsão usados",
-
-                    color = if (isDarkMode) Color(0xFFFED9ED) else Color(0xFFC03582),
-                    fontSize = 21.sp,
+                    fontFamily = aksharFont,
+                    color = if (isDarkMode) Color(0xFFEDC6CE) else Color(0xFFC4213C),
+                    fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     lineHeight = 32.sp
                 )
@@ -128,7 +128,7 @@ fun PaginaInicial(navController: NavController) {
                 ) {
                     Text(
                         text = "continue",
-                        color = if (isDarkMode) Color.White else Color(0xFFFF46AC),
+                        color = if (isDarkMode) Color(0xFFFF667F) else Color(0xFFF65B75),
                         fontSize = 24.sp,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -145,7 +145,7 @@ fun PaginaInicial(navController: NavController) {
                             painter = painterResource(id = R.drawable.seta),
                             modifier = Modifier.size(30.dp),
                             contentDescription = null,
-                            colorFilter = if (isDarkMode) ColorFilter.tint(Color.White) else null
+                            colorFilter = if (isDarkMode) ColorFilter.tint(Color(0xFFFF667F)) else ColorFilter.tint(Color(0xFFF65B75)),
                         )
                     }
                 }

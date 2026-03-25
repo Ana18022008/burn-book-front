@@ -31,7 +31,18 @@ class MainActivity : ComponentActivity() {
                     composable("principal") {
                         PaginaPrincipal()
                     }
+
+                    composable("cadastro"){
+                        PaginaCadastro(navController)
+                    }
+
+                    composable("login"){
+                        PaginaLogin()
+                    }
+
+
                 }
+
             }
         }
     }
