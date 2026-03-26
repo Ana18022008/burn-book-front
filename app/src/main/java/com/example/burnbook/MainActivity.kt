@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = "usuario"
+                    startDestination = "inicial"
                 ) {
 
                     composable("inicial") {
@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable("login"){
-                        PaginaLogin()
+                        PaginaLogin(navController)
                     }
 
                     composable("usuario") {
