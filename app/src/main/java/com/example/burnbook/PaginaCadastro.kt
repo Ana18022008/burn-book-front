@@ -365,7 +365,6 @@ fun cardCadastro(navController: NavController,isDarkMode: Boolean) {
                         }
                     }
 
-
                 }
 
 
@@ -407,7 +406,7 @@ fun cardCadastro(navController: NavController,isDarkMode: Boolean) {
                 Text(
                     text = "Já possui uma conta? ",
                     fontSize = 14.sp,
-                    fontWeight = FontWeight.W400,
+                    fontWeight = FontWeight.W500,
                     color = if (isDarkMode) Color.White else Color.Black
                 )
                 TextButton(
