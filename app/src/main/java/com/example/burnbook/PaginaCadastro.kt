@@ -80,6 +80,7 @@ Scaffold (
     }
 }
 
+
 @Composable
 fun topBar(isDarkMode: Boolean, onToggle: () -> Unit){
     val iconeTopo = if (isDarkMode) R.drawable.sol else R.drawable.lua_
@@ -430,7 +431,6 @@ fun cardCadastro(navController: NavController,isDarkMode: Boolean) {
         }
     }
 }
-
 
 
 val fontCadastro = FontFamily(Font(R.font.kadwa_regular))
