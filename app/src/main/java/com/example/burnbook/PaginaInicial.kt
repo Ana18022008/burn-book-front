@@ -137,7 +137,7 @@ fun PaginaInicial(navController: NavController) {
 
                     IconButton(
                         onClick = {
-                            navController.navigate("principal")
+                            navController.navigate("login")
                         },
                         modifier = Modifier.size(40.dp)
                     ) {
