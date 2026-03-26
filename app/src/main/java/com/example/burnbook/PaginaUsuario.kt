@@ -49,14 +49,14 @@ fun PaginaUsuario (navController: NavController) {
     Scaffold(
 
             topBar = {
-                topBarFunUser(
+                topBar(
                     isDarkMode = isDarkMode,
                     onToggle = { isDarkMode = !isDarkMode }
                 )
             },
 
             bottomBar = {
-                bottomBarFun(isDarkMode)
+                bottomBarSimples(isDarkMode)
             },
         ) {
 
@@ -72,73 +72,7 @@ fun PaginaUsuario (navController: NavController) {
     }
 }
 
-@Composable
-fun topBarFunUser (isDarkMode: Boolean, onToggle: () -> Unit) {
 
-    val iconeTopo = if (isDarkMode) R.drawable.sol else R.drawable.lua_
-
-
-        Surface (
-            color = if (isDarkMode) Color(0xFFDE425C) else Color(0xFFF65B75),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(80.dp)
-
-        ) {
-            Row (
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(start = 15.dp, end = 15.dp)
-            ) {
-//            Icon(painter = painterResource(id = R.drawable.icone_burnbook),
-//                contentDescription = "Ícone do Burn Book",
-//                tint = Color.Unspecified,
-//                modifier = Modifier.height(40.dp)
-//            )
-
-                Column (
-                    verticalArrangement = Arrangement.spacedBy((-18).dp)
-                ) {
-
-                    Text(
-                        text = "Burn",
-                        color = Color.White,
-                        fontSize = 30.sp,
-                        fontFamily = JustMeFont
-                    )
-
-                    Text(
-                        text = "BOOK",
-                        color = Color.White,
-                        fontSize = 25.sp,
-                        fontFamily = JaquesShadow
-                    )
-
-                }
-                IconButton(
-                    onClick = onToggle,
-                    modifier = Modifier.size(50.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = iconeTopo),
-                        contentDescription = "Trocar modo",
-                        modifier = Modifier.size(35.dp)
-                    )
-                }
-
-            }
-        }
-
-}
-@Composable
-fun bottomBarFun (isDarkMode: Boolean) {
-    Surface (
-        color = if (isDarkMode) Color(0xFFDE425C) else Color(0xFFF65B75),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(64.dp)
-    ){}
-}
 
 @Composable
 fun cardPerfil (isDarkMode: Boolean, navController: NavController) {
@@ -147,7 +81,7 @@ fun cardPerfil (isDarkMode: Boolean, navController: NavController) {
     Surface (
         modifier = Modifier
             .fillMaxSize(),
-        color = if (isDarkMode) Color(0xFF505050) else Color(0xFFE6E6E6)
+        color = if (isDarkMode) Color(0xFF000000) else Color(0xFFE6E6E6)
     ){
 
         Column(
@@ -213,7 +147,7 @@ fun cardPerfil (isDarkMode: Boolean, navController: NavController) {
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .background(
-                                            color = if (isDarkMode) Color(0xFF505050) else Color(
+                                            color = if (isDarkMode) Color(0xFF000000) else Color(
                                                 0xFFE6E6E6
                                             )
                                         ),
@@ -233,7 +167,7 @@ fun cardPerfil (isDarkMode: Boolean, navController: NavController) {
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .background(
-                                            color = if (isDarkMode) Color(0xFF505050) else Color(
+                                            color = if (isDarkMode) Color(0xFF000000) else Color(
                                                 0xFFE6E6E6
                                             )
                                         ),
@@ -253,7 +187,7 @@ fun cardPerfil (isDarkMode: Boolean, navController: NavController) {
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .background(
-                                            color = if (isDarkMode) Color(0xFF505050) else Color(
+                                            color = if (isDarkMode) Color(0xFF000000) else Color(
                                                 0xFFE6E6E6
                                             )
                                         ),

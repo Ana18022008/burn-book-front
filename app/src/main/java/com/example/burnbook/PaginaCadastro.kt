@@ -48,7 +48,7 @@ fun PaginaCadastro(navController: NavController){
 
 
 
-Scaffold (
+    Scaffold (
 
         // Barra Superior
         topBar = {
@@ -60,12 +60,12 @@ Scaffold (
 
         // Barra inferior
         bottomBar = {
-            bottomBar(isDarkMode)
+            bottomBarSimples(isDarkMode)
         },
 
-    ) {
+        ) {
         // Box principal
-        innerPadding ->
+            innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -74,7 +74,7 @@ Scaffold (
                 )
                 .padding(innerPadding)
         ) {
-        cardCadastro(navController = navController, isDarkMode = isDarkMode)
+            cardCadastro(navController = navController, isDarkMode = isDarkMode)
 
         }
     }
@@ -82,65 +82,7 @@ Scaffold (
 
 
 @Composable
-fun topBar(isDarkMode: Boolean, onToggle: () -> Unit){
-    val iconeTopo = if (isDarkMode) R.drawable.sol else R.drawable.lua_
-
-    Surface (
-        color = if (isDarkMode) Color(0xFFDE425C) else Color(0xFFF65B75),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(90.dp)
-
-
-    ) {
-        Row (
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(start = 15.dp)
-        ) {
-
-            Column (
-                verticalArrangement = Arrangement.spacedBy((-18).dp),
-                modifier = Modifier.padding(top = 15.dp)
-            ) {
-
-                Text(
-                    text = "Burn",
-                    color = Color.White,
-                    fontSize = 30.sp,
-                    fontFamily = JustMeFont
-                )
-
-                Text(
-                    text = "BOOK",
-                    color = Color.White,
-                    fontSize = 25.sp,
-                    fontFamily = JaquesShadow
-                )
-
-            }
-            IconButton(
-                onClick = onToggle,
-                modifier = Modifier
-                    .size(65.dp)
-                    .padding(top = 15.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = iconeTopo),
-                    contentDescription = "Trocar modo",
-                    modifier = Modifier
-                        .size(40.dp)
-                        .offset(y = 7.dp)
-                )
-            }
-
-        }
-    }
-
-}
-
-@Composable
-fun bottomBar(isDarkMode: Boolean){
+fun bottomBarSimples(isDarkMode: Boolean){
     Surface (
         color = if (isDarkMode) Color(0xFFDE425C) else Color(0xFFF65B75),
         modifier = Modifier

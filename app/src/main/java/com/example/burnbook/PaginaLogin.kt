@@ -32,45 +32,45 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 @Composable
-    fun PaginaLogin(navController: NavController){
+fun PaginaLogin(navController: NavController){
 
-        var isDarkMode by remember {
-            mutableStateOf(false)
-        }
+    var isDarkMode by remember {
+        mutableStateOf(false)
+    }
 
 
 
-        Scaffold (
+    Scaffold (
 
-            // Barra Superior
-            topBar = {
-                topBar(
-                    isDarkMode = isDarkMode,
-                    onToggle = { isDarkMode = !isDarkMode }
+        // Barra Superior
+        topBar = {
+            topBar(
+                isDarkMode = isDarkMode,
+                onToggle = { isDarkMode = !isDarkMode }
+            )
+        },
+
+        // Barra inferior
+        bottomBar = {
+            bottomBarSimples(isDarkMode)
+        },
+
+        ) {
+        // Box principal
+            innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    if (isDarkMode) Color(0xFF000000) else Color(0xFFE6E6E6)
                 )
-            },
+                .padding(innerPadding)
+        ) {
+            cardLogin(navController = navController, isDarkMode = isDarkMode)
 
-            // Barra inferior
-            bottomBar = {
-                bottomBar(isDarkMode)
-            },
-
-            ) {
-            // Box principal
-                innerPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        if (isDarkMode) Color(0xFF000000) else Color(0xFFE6E6E6)
-                    )
-                    .padding(innerPadding)
-            ) {
-                cardLogin(navController = navController, isDarkMode = isDarkMode)
-
-            }
         }
     }
+}
 
 @Composable
 fun cardLogin(navController: NavController, isDarkMode: Boolean) {
