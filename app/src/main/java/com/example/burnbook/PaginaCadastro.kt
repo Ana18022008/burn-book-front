@@ -129,7 +129,7 @@ fun topBar(isDarkMode: Boolean, onToggle: () -> Unit){
                     contentDescription = "Trocar modo",
                     modifier = Modifier
                         .size(40.dp)
-                        .offset(y = 7.dp) // <--- Use OFFSET em vez de padding
+                        .offset(y = 7.dp)
                 )
             }
 
