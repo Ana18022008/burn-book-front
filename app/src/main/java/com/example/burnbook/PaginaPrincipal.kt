@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -50,7 +51,7 @@ fun PaginaPrincipal (navController: NavController) {
 
         // Barra Superior
         topBar = {
-            topBarFun(
+            topBar(
                 isDarkMode = isDarkMode,
                 onToggle = { isDarkMode = !isDarkMode }
             )
@@ -58,7 +59,7 @@ fun PaginaPrincipal (navController: NavController) {
 
         // Barra inferior
         bottomBar = {
-            bottomBarFun(isDarkMode, navController)
+            bottomBar(isDarkMode, navController)
         },
 
     ) {
@@ -86,7 +87,7 @@ fun PaginaPrincipal (navController: NavController) {
 
 
 @Composable
-fun topBarFun(isDarkMode: Boolean, onToggle: () -> Unit) {
+fun topBar(isDarkMode: Boolean, onToggle: () -> Unit) {
 
     val iconeTopo = if (isDarkMode) R.drawable.sol else R.drawable.lua_
 
@@ -144,7 +145,7 @@ fun topBarFun(isDarkMode: Boolean, onToggle: () -> Unit) {
 
 }
 @Composable
-fun bottomBarFun(isDarkMode: Boolean, navController: NavController) {
+fun bottomBar(isDarkMode: Boolean, navController: NavController) {
 
 
     Surface (
@@ -159,23 +160,37 @@ fun bottomBarFun(isDarkMode: Boolean, navController: NavController) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(start = 15.dp, end = 15.dp)
         ){
-            Icon(
-                painter = painterResource(id = R.drawable.home),
-                contentDescription = "Ícone da casa/tela inicial",
-                tint = Color.Unspecified,
-                modifier = Modifier.height(30.dp)
-            )
-            Icon(
-                painter = painterResource(id = R.drawable.sinos__1_),
-                contentDescription = "Ícone de noificações",
-                tint = Color.Unspecified,
-                modifier = Modifier.height(30.dp)
-            )
-            Icon(painter = painterResource(id = R.drawable.icone_adicao__2_),
-                contentDescription = "Ícone de adição de post",
-                tint = Color.Unspecified,
-                modifier = Modifier.height(55.dp)
+
+            IconButton(
+                onClick = {
+                    navController.navigate("principal")
+                },
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.home),
+                    contentDescription = "Ícone da casa/tela inicial",
+                    tint = Color.Unspecified,
+                    modifier = Modifier.height(50.dp)
                 )
+            }
+            Icon(
+                painter = painterResource(id = R.drawable.postuser),
+                contentDescription = "Ícone de posts do usuário",
+                tint = Color.Unspecified,
+                modifier = Modifier.height(30.dp)
+            )
+            IconButton(
+                onClick = {
+                    navController.navigate("post")
+                },
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.icone_adicao__2_),
+                    contentDescription = "Ícone de adição de post",
+                    tint = Color.Unspecified,
+                    modifier = Modifier.height(50.dp)
+                )
+            }
             Icon(
                 painter = painterResource(id = R.drawable.icone_comentarios),
                 contentDescription = "Ícone de conversas",
@@ -299,6 +314,8 @@ fun cardPost (isDarkMode: Boolean) {
         }
     }
 }
+
+
 
 val JustMeFont = FontFamily(Font(R.font.justmeagaindownhere_regular))
 
