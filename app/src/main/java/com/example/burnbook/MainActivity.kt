@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = "inicial"
+                    startDestination = "usuario"
                 ) {
 
                     composable("inicial") {
@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable("principal") {
-                        PaginaPrincipal()
+                        PaginaPrincipal(navController)
                     }
 
                     composable("cadastro"){
@@ -41,6 +41,10 @@ class MainActivity : ComponentActivity() {
 
                     composable("login"){
                         PaginaLogin()
+                    }
+
+                    composable("usuario") {
+                        PaginaUsuario(navController)
                     }
 
 

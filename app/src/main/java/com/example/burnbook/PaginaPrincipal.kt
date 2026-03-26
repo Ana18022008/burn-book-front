@@ -60,7 +60,6 @@ fun PaginaPrincipal (navController: NavController) {
         // Barra inferior
         bottomBar = {
             bottomBar(isDarkMode, navController)
-
         },
 
     ) {
@@ -147,8 +146,7 @@ fun topBar(isDarkMode: Boolean, onToggle: () -> Unit) {
 }
 
 @Composable
-fun bottomBar(isDarkMode: Boolean, navController: NavController) {
-
+fun bottomBarFun(isDarkMode: Boolean, navController: NavController) {
 
     Surface (
         color = if (isDarkMode) Color(0xFFDE425C) else Color(0xFFF65B75),
