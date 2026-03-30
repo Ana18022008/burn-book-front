@@ -95,7 +95,7 @@ fun topBar(isDarkMode: Boolean, onToggle: () -> Unit){
         color = if (isDarkMode) Color(0xFFDE425C) else Color(0xFFF65B75),
         modifier = Modifier
             .fillMaxWidth()
-            .height(90.dp)
+            .height(60.dp)
 
 
     ) {
@@ -106,8 +106,7 @@ fun topBar(isDarkMode: Boolean, onToggle: () -> Unit){
         ) {
 
             Column (
-                verticalArrangement = Arrangement.spacedBy((-18).dp),
-                modifier = Modifier.padding(top = 15.dp)
+                verticalArrangement = Arrangement.spacedBy((-18).dp)
             ) {
 
                 Text(
@@ -129,7 +128,7 @@ fun topBar(isDarkMode: Boolean, onToggle: () -> Unit){
                 onClick = onToggle,
                 modifier = Modifier
                     .size(65.dp)
-                    .padding(top = 15.dp)
+                    .padding(bottom = 10.dp)
             ) {
                 Image(
                     painter = painterResource(id = iconeTopo),
