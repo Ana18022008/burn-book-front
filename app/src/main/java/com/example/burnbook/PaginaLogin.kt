@@ -44,7 +44,6 @@ fun PaginaLogin(navController: NavController, viewModel: AuthViewModel) {
     var isDarkMode by remember { mutableStateOf(false) }
     val uiState by viewModel.uiState.collectAsState()
 
-    // Redireciona para principal quando login for bem-sucedido
     LaunchedEffect(uiState) {
         if (uiState is AuthState.Sucesso) {
             navController.navigate("principal") {
@@ -114,7 +113,7 @@ fun cardLogin(
             ) {
                 Column(modifier = Modifier.width(319.dp)) {
                     Text(
-                        text = "Email:",  // corrigido de "Nome de usuário"
+                        text = "Email:",
                         fontFamily = fontTopicos,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
@@ -157,17 +156,14 @@ fun cardLogin(
                         BasicTextField(
                             value = senha,
                             onValueChange = { senha = it },
-                            visualTransformation = PasswordVisualTransformation(), // oculta a senha
+                            visualTransformation = PasswordVisualTransformation(),
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
-
-
-
                 Button(
                     onClick = { onEntrar(email, senha) },
-                    enabled = uiState !is AuthState.Loading, // desabilita durante a requisição
+                    enabled = uiState !is AuthState.Loading,
                     modifier = Modifier
                         .width(200.dp)
                         .padding(bottom = 17.dp)
@@ -230,5 +226,6 @@ fun cardLogin(
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
         }
+
     }
 }
