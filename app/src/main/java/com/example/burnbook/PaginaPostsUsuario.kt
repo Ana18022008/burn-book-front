@@ -32,17 +32,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
-@Composable
-fun PaginaPostsUsuario (navController: NavController) {
+//MODO CLARO E MODO ESCURO JÁ EDITADOS
 
-    var isDarkMode by remember { mutableStateOf(false) }
+@Composable
+fun PaginaPostsUsuario (navController: NavController,
+                        isDarkMode: Boolean,
+                        onToggleDarkMode: () -> Unit ) {
+
 
     Scaffold (
 
         topBar = {
             topBar(
                 isDarkMode = isDarkMode,
-                onToggle = { isDarkMode = !isDarkMode }
+                onToggle = onToggleDarkMode
             )
         },
 
@@ -56,9 +59,7 @@ fun PaginaPostsUsuario (navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    if (isDarkMode) Color(0xFF505050) else Color(0xFFE6E6E6)
-                )
+                .background(if (isDarkMode) Color(0xFF161616) else Color(0xFFE6E6E6))
                 .padding(innerPadding),
         ) {
 
@@ -153,7 +154,8 @@ fun cardSeusPosts(isDarkMode: Boolean) {
                         text = "01",
                         fontSize = 15.sp,
                         modifier = Modifier.padding(end = 8.dp),
-                        fontFamily = CinzelBold
+                        fontFamily = CinzelBold,
+                        color = Color.Gray
                     )
 
                     Icon(
@@ -178,6 +180,7 @@ fun cardSeusPosts(isDarkMode: Boolean) {
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
                 fontSize = 14.sp,
+                color = Color.Gray,
                 fontFamily = CinzelBold
             )
             Surface(

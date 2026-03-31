@@ -26,11 +26,16 @@ import androidx.navigation.NavController
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 
+//MODO CLARO E MODO ESCURO JÁ EDITADOS
+
 val aksharFont = FontFamily(Font(R.font.akshar))
 
 @Composable
-fun PaginaInicial(navController: NavController) {
-    var isDarkMode by remember { mutableStateOf(false) }
+fun PaginaInicial(
+    navController: NavController,
+    isDarkMode: Boolean,
+    onToggleDarkMode: () -> Unit
+) {
 
     val corDaOndaETitulo = if (isDarkMode) Color(0xFF0D0D0D) else Color.White
     val iconeTopo = if (isDarkMode) R.drawable.sol else R.drawable.lua
@@ -73,8 +78,11 @@ fun PaginaInicial(navController: NavController) {
 
 
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                IconButton(onClick = { isDarkMode = !isDarkMode },
-                    modifier = Modifier.size(50.dp)) {
+                IconButton(
+
+                    onClick = { onToggleDarkMode() },
+                    modifier = Modifier.size(50.dp)
+                ) {
                     Image(
                         painter = painterResource(id = iconeTopo),
                         contentDescription = "Trocar modo",

@@ -40,33 +40,31 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
+//MODO CLARO E MODO ESCURO JÁ EDITADOS
+
 @Composable
-fun PaginaCadastro(navController: NavController){
-
-    var isDarkMode by remember {
-        mutableStateOf(false)
-    }
-
+fun PaginaCadastro(
+    navController: NavController,
+    isDarkMode: Boolean,
+    onToggleDarkMode: () -> Unit ){
 
 
     Scaffold (
 
-        // Barra Superior
         topBar = {
             topBar(
                 isDarkMode = isDarkMode,
-                onToggle = { isDarkMode = !isDarkMode }
+                onToggle = onToggleDarkMode
             )
         },
 
-        // Barra inferior
         bottomBar = {
             bottomBarSimples(isDarkMode)
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
 
         ) {
-        // Box principal
+
             innerPadding ->
         Box(
             modifier = Modifier
@@ -110,7 +108,7 @@ fun cardCadastro(navController: NavController,isDarkMode: Boolean) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(if (isDarkMode) Color(0xFF000000) else Color(0xFFE6E6E6)),
+                .background(if (isDarkMode) Color(0xFF111111) else Color(0xFFE6E6E6)),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
@@ -137,10 +135,10 @@ fun cardCadastro(navController: NavController,isDarkMode: Boolean) {
                         .fillMaxSize()
                         .padding(top = 20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp) // Espaço entre os blocos de input
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
 
-                    //campo do nome
+
                     Column(modifier = Modifier.width(319.dp)) {
                         Text(
                             text = "Nome:",
