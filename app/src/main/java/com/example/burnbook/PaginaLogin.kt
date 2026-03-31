@@ -163,15 +163,7 @@ fun cardLogin(
                     }
                 }
 
-                // Mensagem de erro vinda da API
-                if (uiState is AuthState.Erro) {
-                    Text(
-                        text = (uiState as AuthState.Erro).mensagem,
-                        color = Color.Red,
-                        fontSize = 13.sp,
-                        modifier = Modifier.padding(horizontal = 20.dp)
-                    )
-                }
+
 
                 Button(
                     onClick = { onEntrar(email, senha) },
@@ -229,6 +221,14 @@ fun cardLogin(
                     fontWeight = FontWeight.SemiBold
                 )
             }
+        }
+        if (uiState is AuthState.Erro) {
+            Text(
+                text = (uiState as AuthState.Erro).mensagem,
+                color = Color.Black,
+                fontSize = 13.sp,
+                modifier = Modifier.padding(horizontal = 20.dp)
+            )
         }
     }
 }
