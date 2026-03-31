@@ -10,6 +10,12 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.burnbook.ui.theme.BurnBookTheme
+import androidx.navigation.compose.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -20,15 +26,16 @@ import com.example.burnbook.repository.ComentarioRepository
 import com.example.burnbook.ui.PaginaComentarios
 import com.example.burnbook.ui.theme.BurnBookTheme
 import com.example.burnbook.viewmodel.ComentarioViewModel
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
         window.statusBarColor = android.graphics.Color.TRANSPARENT
-
+      
         setContent {
             BurnBookTheme {
                 val navController = rememberNavController()
@@ -78,6 +85,31 @@ class MainActivity : ComponentActivity() {
                     composable("postsUser") { PaginaPostsUsuario(navController) }
                 }
             }
+
         }
     }
 }
+}
+
+
+
+
+
+@Composable
+fun Greeting(name: String, modifier: Modifier = Modifier) {
+    Text(
+        text = "Hello $name!",
+        modifier = modifier
+    )
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun GreetingPreview() {
+    BurnBookTheme {
+        Greeting("Android")
+    }
+}
+
+
