@@ -164,7 +164,6 @@ fun cardPerfil(isDarkMode: Boolean, navController: NavController, usuario: Usuar
                                 textAlign = TextAlign.Center
                             )
 
-                            // BLOCO USUÁRIO
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
                                     "NOME DE USUÁRIO",
@@ -187,7 +186,6 @@ fun cardPerfil(isDarkMode: Boolean, navController: NavController, usuario: Usuar
                                 )
                             }
 
-                            // BLOCO EMAIL
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
                                     "EMAIL",
@@ -210,7 +208,6 @@ fun cardPerfil(isDarkMode: Boolean, navController: NavController, usuario: Usuar
                                 )
                             }
 
-                            // DATA
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
                                     "DATA DE NASCIMENTO",

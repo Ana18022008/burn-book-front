@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,6 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -54,7 +57,6 @@ fun PaginaPrincipal(navController: NavController, viewModel: FeedViewModel) {
 
     var isDarkMode by remember { mutableStateOf(false) }
 
-    // Carrega a primeira página ao entrar na tela
     LaunchedEffect(Unit) {
         viewModel.carregarMais()
     }
@@ -62,7 +64,6 @@ fun PaginaPrincipal(navController: NavController, viewModel: FeedViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
 
-    // Detecta quando chegou perto do final da lista para carregar mais
     val deveCarregarMais by remember {
         derivedStateOf {
             val ultimoVisivel = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
@@ -134,6 +135,7 @@ fun PaginaPrincipal(navController: NavController, viewModel: FeedViewModel) {
                     }
                 }
             }
+
         }
     }
 }
@@ -148,6 +150,8 @@ fun topBar(isDarkMode: Boolean, onToggle: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp)
+
+
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -161,12 +165,14 @@ fun topBar(isDarkMode: Boolean, onToggle: () -> Unit) {
                     fontSize = 30.sp,
                     fontFamily = JustMeFont
                 )
+
                 Text(
                     text = "BOOK",
                     color = Color.White,
                     fontSize = 25.sp,
                     fontFamily = JaquesShadow
                 )
+
             }
             IconButton(
                 onClick = onToggle,
@@ -182,8 +188,10 @@ fun topBar(isDarkMode: Boolean, onToggle: () -> Unit) {
                         .offset(y = 7.dp)
                 )
             }
+
         }
     }
+
 }
 
 @Composable
@@ -242,10 +250,10 @@ fun bottomBar(isDarkMode: Boolean, navController: NavController) {
                     modifier = Modifier.height(30.dp)
                 )
             }
+
         }
     }
 }
-
 @Composable
 fun cardPost(isDarkMode: Boolean, publicacao: PublicacaoResponse, onCurtir: () -> Unit) {
     Surface(
@@ -273,7 +281,6 @@ fun cardPost(isDarkMode: Boolean, publicacao: PublicacaoResponse, onCurtir: () -
                             .height(25.dp)
                             .padding(end = 8.dp)
                     )
-                    // Mostra o nome do autor (ou "Anônimo" se isAnonimo)
                     Text(
                         text = if (publicacao.isAnonimo) "Anônimo" else (publicacao.usernameAutor ?: ""),
                         fontSize = 14.sp,
@@ -313,9 +320,9 @@ fun cardPost(isDarkMode: Boolean, publicacao: PublicacaoResponse, onCurtir: () -
                         tint = Color.Unspecified,
                         modifier = Modifier.height(20.dp)
                     )
+
                 }
             }
-
             HorizontalDivider(
                 modifier = Modifier
                     .padding(vertical = 8.dp)
@@ -323,13 +330,6 @@ fun cardPost(isDarkMode: Boolean, publicacao: PublicacaoResponse, onCurtir: () -
                 thickness = 1.dp,
                 color = Color.LightGray
             )
-
-//            Text(
-//                text = publicacao.dataCriacao,
-//                modifier = Modifier.padding(horizontal = 16.dp),
-//                fontSize = 14.sp,
-//                fontFamily = CinzelBold
-//            )
 
             Surface(
                 modifier = Modifier
@@ -355,3 +355,4 @@ val JustMeFont = FontFamily(Font(R.font.justmeagaindownhere_regular))
 val JaquesShadow = FontFamily(Font(R.font.jacquesfrancoisshadow_regular))
 val Cinzel = FontFamily(Font(R.font.cinzel))
 val CinzelBold = FontFamily(Font(R.font.cinzel_bold))
+val inter = FontFamily(Font(R.font.inter))
