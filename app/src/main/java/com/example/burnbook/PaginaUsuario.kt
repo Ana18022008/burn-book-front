@@ -39,19 +39,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
+//MODO CLARO E MODO ESCURO JÁ EDITADOS
+
 @Composable
-fun PaginaUsuario (navController: NavController) {
-
-    var isDarkMode by remember {
-        mutableStateOf(false)
-    }
-
+fun PaginaUsuario(
+    navController: NavController,
+    isDarkMode: Boolean,
+    onToggleDarkMode: () -> Unit
+) {
     Scaffold(
 
             topBar = {
                 topBar(
                     isDarkMode = isDarkMode,
-                    onToggle = { isDarkMode = !isDarkMode }
+                    onToggle = onToggleDarkMode
                 )
             },
 
@@ -81,7 +82,7 @@ fun cardPerfil (isDarkMode: Boolean, navController: NavController) {
     Surface (
         modifier = Modifier
             .fillMaxSize(),
-        color = if (isDarkMode) Color(0xFF000000) else Color(0xFFE6E6E6)
+        color = if (isDarkMode) Color(0xFF161616) else Color(0xFFE6E6E6)
     ){
 
         Column(
@@ -121,7 +122,7 @@ fun cardPerfil (isDarkMode: Boolean, navController: NavController) {
                                 .fillMaxSize()
                                 .padding(top = 20.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(35.dp) // espaço entre blocos
+                            verticalArrangement = Arrangement.spacedBy(35.dp)
                         ) {
 
                             Text(
@@ -135,7 +136,7 @@ fun cardPerfil (isDarkMode: Boolean, navController: NavController) {
                                 textAlign = TextAlign.Center
                             )
 
-                            // BLOCO USUÁRIO
+
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("NOME DE USUÁRIO", color = if (isDarkMode) Color.White else Color.Black, fontSize = 16.sp, fontWeight = FontWeight.Bold, fontFamily = cinzel)
 
@@ -146,16 +147,12 @@ fun cardPerfil (isDarkMode: Boolean, navController: NavController) {
                                     fontSize = 24.sp,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .background(
-                                            color = if (isDarkMode) Color(0xFF000000) else Color(
-                                                0xFFE6E6E6
-                                            )
-                                        ),
+                                        .background(if (isDarkMode) Color(0xFF161616) else Color(0xFFE6E6E6)),
                                     textAlign = TextAlign.Center
                                 )
                             }
 
-                            // BLOCO EMAIL
+
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("EMAIL", color = if (isDarkMode) Color.White else Color.Black, fontSize = 16.sp, fontWeight = FontWeight.Bold, fontFamily = cinzel)
 
@@ -166,16 +163,12 @@ fun cardPerfil (isDarkMode: Boolean, navController: NavController) {
                                     fontFamily = Kadwa,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .background(
-                                            color = if (isDarkMode) Color(0xFF000000) else Color(
-                                                0xFFE6E6E6
-                                            )
-                                        ),
+                                        .background(if (isDarkMode) Color(0xFF161616) else Color(0xFFE6E6E6)),
                                     textAlign = TextAlign.Center
                                 )
                             }
 
-                            // DATA
+
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("DATA DE NASCIMENTO", color = if (isDarkMode) Color.White else Color.Black, fontSize = 16.sp, fontWeight = FontWeight.Bold, fontFamily = cinzel)
 
@@ -186,11 +179,7 @@ fun cardPerfil (isDarkMode: Boolean, navController: NavController) {
                                     fontFamily = Kadwa,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .background(
-                                            color = if (isDarkMode) Color(0xFF000000) else Color(
-                                                0xFFE6E6E6
-                                            )
-                                        ),
+                                        .background(if (isDarkMode) Color(0xFF161616) else Color(0xFFE6E6E6)),
                                     textAlign = TextAlign.Center
                                 )
                             }

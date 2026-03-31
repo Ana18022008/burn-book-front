@@ -12,6 +12,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.burnbook.ui.theme.BurnBookTheme
@@ -37,28 +40,25 @@ class MainActivity : ComponentActivity() {
         window.statusBarColor = android.graphics.Color.TRANSPARENT
       
         setContent {
-            BurnBookTheme {
+
+            var isDarkMode by remember { mutableStateOf(false) }
+
+
+            BurnBookTheme(darkTheme = isDarkMode) {
                 val navController = rememberNavController()
                 val context = LocalContext.current
 
-                val tokenDataStore = remember { TokenDataStore(context) }
-
                 NavHost(
                     navController = navController,
-                    startDestination = "inicial"
+                    startDestination = "post"
+
+
                 ) {
-
-
                     composable("comentarios") {
-                        val context = LocalContext.current
-
-
                         val tokenDataStore = remember { TokenDataStore(context) }
                         val retrofit = RetrofitInstance.create(tokenDataStore)
                         val api = retrofit.create(ComentarioApi::class.java)
-
                         val repository = ComentarioRepository(api)
-
 
                         val factory = object : ViewModelProvider.Factory {
                             override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -66,32 +66,29 @@ class MainActivity : ComponentActivity() {
                             }
                         }
 
-
                         val viewModel: ComentarioViewModel = viewModel(factory = factory)
 
                         PaginaComentarios(
                             navController = navController,
                             viewModel = viewModel,
-                            publicacaoId = 1L
+                            publicacaoId = 1L,
+                            isDarkMode = isDarkMode,
+                            onToggleDarkMode = { isDarkMode = !isDarkMode }
                         )
                     }
-
-                    composable("inicial") { PaginaInicial(navController) }
-                    composable("principal") { PaginaPrincipal(navController) }
-                    composable("cadastro") { PaginaCadastro(navController) }
-                    composable("login") { PaginaLogin(navController) }
-                    composable("usuario") { PaginaUsuario(navController) }
-                    composable("post") { PaginaCriacaoBlog(navController) }
-                    composable("postsUser") { PaginaPostsUsuario(navController) }
+                    composable("inicial") { PaginaInicial(navController,isDarkMode = isDarkMode,onToggleDarkMode = { isDarkMode = !isDarkMode }) }
+                    composable("principal") { PaginaPrincipal(navController,isDarkMode = isDarkMode,onToggleDarkMode = { isDarkMode = !isDarkMode }) }
+                    composable("cadastro") { PaginaCadastro(navController,isDarkMode = isDarkMode,onToggleDarkMode = { isDarkMode = !isDarkMode }) }
+                    composable("login") { PaginaLogin(navController,isDarkMode = isDarkMode,onToggleDarkMode = { isDarkMode = !isDarkMode }) }
+                    composable("usuario") { PaginaUsuario(navController,isDarkMode = isDarkMode,onToggleDarkMode = { isDarkMode = !isDarkMode }) }
+                    composable("post") { PaginaCriacaoBlog(navController,isDarkMode = isDarkMode,onToggleDarkMode = { isDarkMode = !isDarkMode }) }
+                    composable("postsUser") { PaginaPostsUsuario(navController,isDarkMode = isDarkMode,onToggleDarkMode = { isDarkMode = !isDarkMode }) }
                 }
             }
 
         }
     }
 }
-}
-
-
 
 
 

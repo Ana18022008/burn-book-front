@@ -42,42 +42,41 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
+
+//MODO CLARO E MODO ESCURO JÁ EDITADOS
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PaginaPrincipal (navController: NavController) {
-
-    var isDarkMode by remember { mutableStateOf(false) }
+fun PaginaPrincipal (navController: NavController,
+                     isDarkMode: Boolean,
+                     onToggleDarkMode: () -> Unit ) {
 
     Scaffold (
 
-        // Barra Superior
         topBar = {
             topBar(
                 isDarkMode = isDarkMode,
-                onToggle = { isDarkMode = !isDarkMode }
+                onToggle = onToggleDarkMode
             )
         },
 
-        // Barra inferior
         bottomBar = {
             bottomBar(isDarkMode, navController)
         },
 
         ) {
-        // Box principal
+
             innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    if (isDarkMode) Color(0xFF505050) else Color(0xFFE6E6E6)
-                )
+                .background(if (isDarkMode) Color(0xFF161616) else Color(0xFFE6E6E6))
                 .padding(innerPadding)
         ) {
             LazyColumn (
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp), // Espaço nas bordas
-                verticalArrangement = Arrangement.spacedBy(30.dp) // Espaço entre os cards
+                contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(30.dp)
             ){
                 items(3) { cardPost(isDarkMode) }
             }
@@ -255,15 +254,17 @@ fun cardPost (isDarkMode: Boolean) {
                     Icon(
                         painter = painterResource(id = R.drawable.icone_gostei),
                         contentDescription = "Ícone de gostei/like",
-                        tint = Color.Unspecified,
+                        tint = Color.Black,
                         modifier = Modifier.height(30.dp)
                     )
 
                     Text(
                         text = "01",
                         fontSize = 15.sp,
+                        color = Color.Gray,
                         modifier = Modifier.padding(end = 8.dp),
                         fontFamily = CinzelBold
+
                     )
 
                     Icon(
@@ -279,7 +280,7 @@ fun cardPost (isDarkMode: Boolean) {
                 modifier = Modifier
                     .padding(vertical = 8.dp)
                     .fillMaxWidth(),
-                thickness = 1.dp, // Grossura da linha
+                thickness = 1.dp,
                 color = Color.LightGray
             )
 
@@ -287,8 +288,9 @@ fun cardPost (isDarkMode: Boolean) {
                 text = "11/10/2025",
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
-                fontSize = 14.sp,
-                fontFamily = CinzelBold
+                fontSize = 13.sp,
+                color = if (isDarkMode) Color.Gray else Color.Gray,
+                fontFamily = inter
             )
             Surface(
                 modifier = Modifier

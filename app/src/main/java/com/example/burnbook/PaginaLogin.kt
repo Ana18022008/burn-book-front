@@ -31,39 +31,39 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
-@Composable
-fun PaginaLogin(navController: NavController){
+//MODO CLARO E MODO ESCURO JÁ EDITADOS
 
-    var isDarkMode by remember {
-        mutableStateOf(false)
-    }
+@Composable
+fun PaginaLogin(navController: NavController,
+                isDarkMode: Boolean,
+                onToggleDarkMode: () -> Unit ){
+
+
 
 
 
     Scaffold (
 
-        // Barra Superior
+
         topBar = {
             topBar(
                 isDarkMode = isDarkMode,
-                onToggle = { isDarkMode = !isDarkMode }
+                onToggle = onToggleDarkMode
             )
         },
 
-        // Barra inferior
+
         bottomBar = {
             bottomBarSimples(isDarkMode)
         },
 
         ) {
-        // Box principal
+
             innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    if (isDarkMode) Color(0xFF000000) else Color(0xFFE6E6E6)
-                )
+                .background(if (isDarkMode) Color(0xFF111111) else Color(0xFFE6E6E6))
                 .padding(innerPadding)
         ) {
             cardLogin(navController = navController, isDarkMode = isDarkMode)
@@ -80,7 +80,7 @@ fun cardLogin(navController: NavController, isDarkMode: Boolean) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(if (isDarkMode) Color(0xFF000000) else Color(0xFFE6E6E6)),
+            .background(if (isDarkMode) Color(0xFF111111) else Color(0xFFE6E6E6)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(

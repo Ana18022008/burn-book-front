@@ -37,18 +37,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
+//MODO CLARO E MODO ESCURO JÁ EDITADOS
 
 @Composable
-fun PaginaCriacaoBlog (navController: NavController) {
-
-    var isDarkMode by remember { mutableStateOf(false) }
+fun PaginaCriacaoBlog (navController: NavController,
+                       isDarkMode: Boolean,
+                       onToggleDarkMode: () -> Unit ) {
 
     Scaffold (
 
         topBar = {
             topBar(
                 isDarkMode = isDarkMode,
-                onToggle = { isDarkMode = !isDarkMode }
+                onToggle = onToggleDarkMode
             )
         },
 
@@ -61,10 +62,9 @@ fun PaginaCriacaoBlog (navController: NavController) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    if (isDarkMode) Color(0xFF505050) else Color(0xFFE6E6E6)
-                )
+                .background(if (isDarkMode) Color(0xFF161616) else Color(0xFFE6E6E6))
                 .padding(innerPadding),
+
         ) {
             criarPost(isDarkMode, navController)
 
@@ -88,7 +88,7 @@ fun criarPost(isDarkMode: Boolean, navController: NavController) {
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
 
-            Text("CONTEÚDO", fontFamily = cinzel, fontWeight = FontWeight.Bold)
+            Text("CONTEÚDO", fontFamily = cinzel, fontWeight = FontWeight.Bold, color = Color.Black)
 
             Surface(
                 modifier = Modifier
@@ -106,7 +106,7 @@ fun criarPost(isDarkMode: Boolean, navController: NavController) {
 
             Spacer(modifier = Modifier.size(20.dp))
 
-            Text("CATEGORIA", fontFamily = cinzel, fontWeight = FontWeight.Bold)
+            Text("CATEGORIA", fontFamily = cinzel, fontWeight = FontWeight.Bold, color = Color.Black)
 
             Surface(
                 modifier = Modifier
@@ -124,7 +124,7 @@ fun criarPost(isDarkMode: Boolean, navController: NavController) {
 
             Spacer(modifier = Modifier.size(10.dp))
 
-            Text("ANÔNIMO", fontFamily = cinzel, fontWeight = FontWeight.Bold)
+            Text("ANÔNIMO", fontFamily = cinzel, fontWeight = FontWeight.Bold, color = Color.Black)
 
             Surface(
                 modifier = Modifier

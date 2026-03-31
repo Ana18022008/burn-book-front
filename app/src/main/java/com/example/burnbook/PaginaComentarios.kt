@@ -30,14 +30,16 @@ import com.example.burnbook.viewmodel.ComentarioState
 import com.example.burnbook.model.response.ComentarioResponse
 import com.example.burnbook.topBar
 
+//MODO CLARO E MODO ESCURO JÁ EDITADOS
 
 @Composable
 fun PaginaComentarios(
     navController: NavController,
     viewModel: ComentarioViewModel,
-    publicacaoId: Long
+    publicacaoId: Long,
+    isDarkMode: Boolean,
+    onToggleDarkMode: () -> Unit
 ) {
-    var isDarkMode by remember { mutableStateOf(false) }
 
     val comentariosFake = listOf(
         ComentarioResponse(
@@ -71,28 +73,34 @@ fun PaginaComentarios(
     )
 
     Scaffold(
-        topBar = { topBar(isDarkMode, onToggle = { isDarkMode = !isDarkMode }) },
+        topBar = { topBar(isDarkMode, onToggle = onToggleDarkMode) },
         bottomBar = { bottomBar(isDarkMode, navController) }
     ) { innerPadding ->
-        // 1. Usamos Column para empilhar a lista e o botão
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(if (isDarkMode) Color(0xFF1E1E1E) else Color(0xFFE6E6E6))
+                .background(if (isDarkMode) Color(0xFF161616) else Color(0xFFE6E6E6))
                 .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(modifier = Modifier.weight(1f)) {
+            Box(modifier = Modifier.weight(1f)
+            )
+            {
                 ListaDeComentarios(
                     isDarkMode = isDarkMode,
-                    comentarios = comentariosFake
+                    comentarios = comentariosFake,
+
                 )
             }
 
-            // SUBSTITUA O BotaoComentar POR ESTE:
-            BarraInputComentario(onClick = {
+
+            BarraInputComentario(
+                onClick = {
                 navController.navigate("tela_comentar")
-            })
+            },
+                isDarkMode = isDarkMode,
+            )
         }
     }
 }
@@ -243,11 +251,11 @@ fun PostPrincipalCard(isDarkMode: Boolean) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BarraInputComentario(onClick: () -> Unit) {
-    // Surface para criar o fundo branco e a borda superior sutil
+fun BarraInputComentario(isDarkMode: Boolean, onClick: () -> Unit) {
+
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = Color.White,
+        color = if (isDarkMode) Color.Black else Color.White,
         tonalElevation = 2.dp
     ) {
         Row(
@@ -261,7 +269,7 @@ fun BarraInputComentario(onClick: () -> Unit) {
                 imageVector = Icons.Default.Add,
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),
-                tint = Color.Black
+                tint = if (isDarkMode) Color.White else Color.Black,
             )
 
             Spacer(modifier = Modifier.width(12.dp))
