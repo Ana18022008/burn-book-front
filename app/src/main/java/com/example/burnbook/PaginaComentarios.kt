@@ -1,11 +1,13 @@
 package com.example.burnbook.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -38,27 +40,59 @@ fun PaginaComentarios(
     var isDarkMode by remember { mutableStateOf(false) }
 
     val comentariosFake = listOf(
-        ComentarioResponse(1, "Ana_Silva", null, "Nossa, eu também estou assim hoje! 😫", "12/10/2025 09:30"),
-        ComentarioResponse(2, "Joao_Dev", null, "Força, o final de semana está chegando!", "12/10/2025 10:15"),
-        ComentarioResponse(3, "Burner_01", null, "Essa empresa acaba com a gente kkk", "12/10/2025 11:00"),
-        ComentarioResponse(4, "Café_Lovers", null, "Um café resolve tudo (ou quase tudo).", "12/10/2025 11:20")
+        ComentarioResponse(
+            1,
+            "Ana_Silva",
+            null,
+            "Nossa, eu também estou assim hoje! 😫",
+            "12/10/2025 09:30"
+        ),
+        ComentarioResponse(
+            2,
+            "Joao_Dev",
+            null,
+            "Força, o final de semana está chegando!",
+            "12/10/2025 10:15"
+        ),
+        ComentarioResponse(
+            3,
+            "Burner_01",
+            null,
+            "Essa empresa acaba com a gente kkk",
+            "12/10/2025 11:00"
+        ),
+        ComentarioResponse(
+            4,
+            "Café_Lovers",
+            null,
+            "Um café resolve tudo (ou quase tudo).",
+            "12/10/2025 11:20"
+        )
     )
 
     Scaffold(
         topBar = { topBar(isDarkMode, onToggle = { isDarkMode = !isDarkMode }) },
         bottomBar = { bottomBar(isDarkMode, navController) }
     ) { innerPadding ->
-        Box(
+        // 1. Usamos Column para empilhar a lista e o botão
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(if (isDarkMode) Color(0xFF1E1E1E) else Color(0xFFE6E6E6))
-                .padding(innerPadding)
+                .padding(innerPadding),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Box(modifier = Modifier.weight(1f)) {
+                ListaDeComentarios(
+                    isDarkMode = isDarkMode,
+                    comentarios = comentariosFake
+                )
+            }
 
-            ListaDeComentarios(
-                isDarkMode = isDarkMode,
-                comentarios = comentariosFake
-            )
+            // SUBSTITUA O BotaoComentar POR ESTE:
+            BarraInputComentario(onClick = {
+                navController.navigate("tela_comentar")
+            })
         }
     }
 }
@@ -203,6 +237,42 @@ fun PostPrincipalCard(isDarkMode: Boolean) {
                     fontFamily = inter
                 )
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BarraInputComentario(onClick: () -> Unit) {
+    // Surface para criar o fundo branco e a borda superior sutil
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = Color.White,
+        tonalElevation = 2.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .clickable { onClick() }
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+                tint = Color.Black
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Text(
+                text = "Adicionar comentário a essa publicação. Seja gentil!",
+                color = Color.Gray,
+                fontSize = 12.sp,
+                fontFamily = inter,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }
