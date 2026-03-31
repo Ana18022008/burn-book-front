@@ -32,7 +32,7 @@ val aksharFont = FontFamily(Font(R.font.akshar))
 fun PaginaInicial(navController: NavController) {
     var isDarkMode by remember { mutableStateOf(false) }
 
-    val corDaOndaETitulo = if (isDarkMode) Color.Black else Color.White
+    val corDaOndaETitulo = if (isDarkMode) Color(0xFF0D0D0D) else Color.White
     val iconeTopo = if (isDarkMode) R.drawable.sol else R.drawable.lua
 
     Box(
