@@ -9,9 +9,7 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitInstance {
 
-
     private const val BASE_URL = "https://burn-book-4ac0.onrender.com"
-
 
     fun create(tokenDataStore: TokenDataStore): Retrofit {
         val logging = HttpLoggingInterceptor().apply {
