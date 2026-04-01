@@ -93,4 +93,5 @@ class PerfilViewModel(
         ultimaPagina = false
         carregarPerfil(usuarioId)
     }
+
 }

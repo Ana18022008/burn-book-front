@@ -55,7 +55,7 @@ fun PaginaCriacaoBlog(
     val uiState by publicacaoViewModel.uiState.collectAsState()
 
     LaunchedEffect(uiState) {
-        if (uiState is PublicacaoState.SucessoCriacao) {
+        if (uiState is PublicacaoState.Sucesso) {
             feedViewModel.recarregar()
             perfilViewModel.recarregarPublicacoes(usuarioId)
             publicacaoViewModel.resetarState()

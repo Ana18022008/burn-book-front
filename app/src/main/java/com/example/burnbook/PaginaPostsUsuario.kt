@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.burnbook.model.response.PublicacaoResponse
 import com.example.burnbook.ui.inter
+import com.example.burnbook.viewmodel.FeedViewModel
 import com.example.burnbook.viewmodel.PerfilState
 import com.example.burnbook.viewmodel.PerfilViewModel
 import com.example.burnbook.viewmodel.PublicacaoState
@@ -26,6 +27,7 @@ fun PaginaPostsUsuario(
     navController: NavController,
     perfilViewModel: PerfilViewModel,
     publicacaoViewModel: PublicacaoViewModel,
+    feedViewModel: FeedViewModel,
     usuarioId: Long?
 ) {
     var isDarkMode by remember { mutableStateOf(false) }
@@ -39,9 +41,11 @@ fun PaginaPostsUsuario(
     // Reage APENAS ao SucessoDelete — não confunde com criação
     LaunchedEffect(publicacaoState) {
         if (publicacaoState is PublicacaoState.SucessoDelete) {
-            usuarioId?.let {
-                perfilViewModel.recarregarPublicacoes(it)
-            }
+            usuarioId?.let { perfilViewModel.recarregarPublicacoes(it) }
+
+
+            feedViewModel.recarregar()
+
             publicacaoViewModel.resetarState()
         }
     }

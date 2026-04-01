@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -65,35 +63,31 @@ fun PaginaPrincipal(
     val listState = rememberLazyListState()
 
     LaunchedEffect(Unit) {
-        if (uiState !is FeedState.Sucesso) {
-            feedViewModel.carregarMais()
-        }
+        feedViewModel.carregarMais()
     }
 
+    // Recarrega o feed após delete
     LaunchedEffect(publicacaoState) {
         if (publicacaoState is PublicacaoState.SucessoDelete) {
             feedViewModel.recarregar()
+            publicacaoViewModel.resetarState()
         }
     }
 
     val deveCarregarMais by remember {
         derivedStateOf {
-            val layoutInfo = listState.layoutInfo
-            val totalItens = layoutInfo.totalItemsCount
-            val ultimoVisivel = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-
-            totalItens > 0 && ultimoVisivel >= (totalItens - 2)
+            val ultimoVisivel = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+            val totalItens = listState.layoutInfo.totalItemsCount
+            totalItens > 0 && ultimoVisivel >= totalItens - 3
         }
     }
 
     LaunchedEffect(deveCarregarMais) {
-        if (deveCarregarMais) {
-            feedViewModel.carregarMais()
-        }
+        if (deveCarregarMais) feedViewModel.carregarMais()
     }
 
     Scaffold(
-        topBar = { topBar(isDarkMode, onToggle = { isDarkMode = !isDarkMode }) },
+        topBar = { topBar(isDarkMode = isDarkMode, onToggle = { isDarkMode = !isDarkMode }) },
         bottomBar = { bottomBar(isDarkMode, navController) },
     ) { innerPadding ->
         Box(
@@ -110,24 +104,28 @@ fun PaginaPrincipal(
                 }
                 is FeedState.Erro -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(text = state.mensagem, color = Color.Red)
+                        Text(
+                            text = state.mensagem,
+                            color = Color.Red,
+                            fontSize = 16.sp,
+                            modifier = Modifier.padding(24.dp),
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
                 is FeedState.Sucesso -> {
                     LazyColumn(
                         state = listState,
                         modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp),
+                        contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(30.dp)
                     ) {
-                        items(
-                            items = state.publicacoes,
-                            key = { it.id }
-                        ) { publicacao ->
+                        items(state.publicacoes) { publicacao ->
                             cardPost(
                                 isDarkMode = isDarkMode,
                                 publicacao = publicacao,
-                                onCurtir = { feedViewModel.curtir(publicacao.id) }
+                                onCurtir = { feedViewModel.curtir(publicacao.id) },
+                                navController
                             )
                         }
                     }
@@ -136,15 +134,13 @@ fun PaginaPrincipal(
         }
     }
 }
+
 @Composable
 fun topBar(isDarkMode: Boolean, onToggle: () -> Unit) {
     val iconeTopo = if (isDarkMode) R.drawable.sol else R.drawable.lua_
-
     Surface(
         color = if (isDarkMode) Color(0xFFDE425C) else Color(0xFFF65B75),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(60.dp)
+        modifier = Modifier.fillMaxWidth().height(60.dp)
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -181,51 +177,24 @@ fun bottomBar(isDarkMode: Boolean, navController: NavController) {
             modifier = Modifier.padding(start = 15.dp, end = 15.dp)
         ) {
             IconButton(onClick = { navController.navigate("principal") }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.home),
-                    contentDescription = "Ícone da casa/tela inicial",
-                    tint = Color.Unspecified,
-                    modifier = Modifier.height(50.dp)
-                )
+                Icon(painter = painterResource(id = R.drawable.home), contentDescription = "Home", tint = Color.Unspecified, modifier = Modifier.height(50.dp))
             }
-            Box(
-                modifier = Modifier.size(40.dp).clickable { navController.navigate("postsUser") }
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.postuser),
-                    contentDescription = "Ícone de posts do usuário",
-                    tint = Color.Unspecified,
-                    modifier = Modifier.fillMaxSize()
-                )
+            Box(modifier = Modifier.size(40.dp).clickable { navController.navigate("postsUser") }) {
+                Icon(painter = painterResource(id = R.drawable.postuser), contentDescription = "Posts", tint = Color.Unspecified, modifier = Modifier.fillMaxSize())
             }
             IconButton(onClick = { navController.navigate("post") }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.icone_adicao__2_),
-                    contentDescription = "Ícone de adição de post",
-                    tint = Color.Unspecified,
-                    modifier = Modifier.height(50.dp)
-                )
+                Icon(painter = painterResource(id = R.drawable.icone_adicao__2_), contentDescription = "Novo post", tint = Color.Unspecified, modifier = Modifier.height(50.dp))
             }
-            Icon(
-                painter = painterResource(id = R.drawable.icone_comentarios),
-                contentDescription = "Ícone de conversas",
-                tint = Color.Unspecified,
-                modifier = Modifier.height(30.dp)
-            )
+            Icon(painter = painterResource(id = R.drawable.icone_comentarios), contentDescription = "Comentários", tint = Color.Unspecified, modifier = Modifier.height(30.dp))
             IconButton(onClick = { navController.navigate("usuario") }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.image_usuario),
-                    contentDescription = "Ícone do usuário",
-                    tint = Color.Unspecified,
-                    modifier = Modifier.height(30.dp)
-                )
+                Icon(painter = painterResource(id = R.drawable.image_usuario), contentDescription = "Usuário", tint = Color.Unspecified, modifier = Modifier.height(30.dp))
             }
         }
     }
 }
 
 @Composable
-fun cardPost(isDarkMode: Boolean, publicacao: PublicacaoResponse, onCurtir: () -> Unit) {
+fun cardPost(isDarkMode: Boolean, publicacao: PublicacaoResponse, onCurtir: () -> Unit, navController: NavController) {
     Surface(
         color = Color.White,
         modifier = Modifier.fillMaxWidth().height(315.dp),
@@ -240,7 +209,7 @@ fun cardPost(isDarkMode: Boolean, publicacao: PublicacaoResponse, onCurtir: () -
                 Row {
                     Icon(
                         painter = painterResource(id = R.drawable.image_usuario),
-                        contentDescription = "Ícone do usuário",
+                        contentDescription = "Usuário",
                         tint = Color.Unspecified,
                         modifier = Modifier.height(25.dp).padding(end = 8.dp)
                     )
@@ -250,15 +219,11 @@ fun cardPost(isDarkMode: Boolean, publicacao: PublicacaoResponse, onCurtir: () -
                         fontFamily = CinzelBold
                     )
                 }
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = onCurtir, modifier = Modifier.size(30.dp)) {
                         Icon(
                             painter = painterResource(id = R.drawable.icone_gostei),
-                            contentDescription = "Ícone de gostei/like",
+                            contentDescription = "Curtir",
                             tint = if (publicacao.curtidoPorMim) Color(0xFFF65B75) else Color.Unspecified,
                             modifier = Modifier.height(30.dp)
                         )
@@ -269,32 +234,28 @@ fun cardPost(isDarkMode: Boolean, publicacao: PublicacaoResponse, onCurtir: () -
                         modifier = Modifier.padding(end = 8.dp),
                         fontFamily = CinzelBold
                     )
-                    Icon(
-                        painter = painterResource(id = R.drawable.icone_comentarios),
-                        contentDescription = "Ícone de comentários",
-                        tint = Color.Unspecified,
-                        modifier = Modifier.height(20.dp)
-                    )
+                    IconButton(
+                        onClick = { navController.navigate("comentarios/${publicacao.id}") },
+                        modifier = Modifier.size(30.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.icone_comentarios),
+                            contentDescription = "Comentários",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.height(20.dp)
+                        )
+                    }
                 }
             }
-
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth(),
-                thickness = 1.dp,
-                color = Color.LightGray
-            )
-
+            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth(), thickness = 1.dp, color = Color.LightGray)
             Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(210.dp)
-                    .padding(end = 16.dp, start = 16.dp),
+                modifier = Modifier.fillMaxWidth().height(240.dp).padding(end = 16.dp, start = 16.dp),
                 color = if (isDarkMode) Color(0xFF505050) else Color(0xFFE6E6E6),
                 shape = RoundedCornerShape(bottomEnd = 10.dp, bottomStart = 10.dp)
             ) {
                 Text(
                     text = publicacao.conteudo,
-                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp),
+                    modifier = Modifier.padding(8.dp),
                     color = if (isDarkMode) Color.White else Color(0xFF2C2C2C),
                     fontSize = 15.sp
                 )

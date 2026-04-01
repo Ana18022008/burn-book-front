@@ -17,7 +17,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -107,10 +106,13 @@ fun cardLogin(
             contentAlignment = Alignment.TopCenter
         ) {
             Column(
-                modifier = Modifier.fillMaxSize().padding(top = 20.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(26.dp)
             ) {
+
                 Column(modifier = Modifier.width(319.dp)) {
                     Text(
                         text = "Email:",
@@ -135,6 +137,7 @@ fun cardLogin(
                         )
                     }
                 }
+
 
                 Column(modifier = Modifier.width(319.dp)) {
                     Text(
@@ -161,6 +164,8 @@ fun cardLogin(
                         )
                     }
                 }
+
+
                 Button(
                     onClick = { onEntrar(email, senha) },
                     enabled = uiState !is AuthState.Loading,
@@ -193,6 +198,7 @@ fun cardLogin(
             }
         }
 
+
         Row(
             modifier = Modifier
                 .padding(end = 45.dp, top = 8.dp)
@@ -218,14 +224,14 @@ fun cardLogin(
                 )
             }
         }
+
         if (uiState is AuthState.Erro) {
             Text(
                 text = (uiState as AuthState.Erro).mensagem,
-                color = Color.Black,
+                color = Color.Red,
                 fontSize = 13.sp,
-                modifier = Modifier.padding(horizontal = 20.dp)
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
             )
         }
-
     }
 }

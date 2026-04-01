@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.burnbook.model.request.PublicacaoRequest
 import com.example.burnbook.model.response.CategoriaResponse
+import com.example.burnbook.model.response.PublicacaoResponse
 import com.example.burnbook.repository.CategoriaRepository
 import com.example.burnbook.repository.PublicacaoRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +14,7 @@ import kotlinx.coroutines.launch
 sealed class PublicacaoState {
     object Idle : PublicacaoState()
     object Loading : PublicacaoState()
-    object SucessoCriacao : PublicacaoState()
+    object Sucesso : PublicacaoState()
     object SucessoDelete : PublicacaoState()
     data class Erro(val mensagem: String) : PublicacaoState()
 }
@@ -46,8 +47,8 @@ class PublicacaoViewModel(
         viewModelScope.launch {
             _uiState.value = PublicacaoState.Loading
             val result = publicacaoRepository.criar(request)
-            _uiState.value = if (result.isSuccess) PublicacaoState.SucessoCriacao
-            else PublicacaoState.Erro(result.exceptionOrNull()?.message ?: "Erro ao criar")
+            _uiState.value = if (result.isSuccess) PublicacaoState.Sucesso
+                             else PublicacaoState.Erro(result.exceptionOrNull()?.message ?: "Erro ao criar")
         }
     }
 
@@ -55,8 +56,8 @@ class PublicacaoViewModel(
         viewModelScope.launch {
             _uiState.value = PublicacaoState.Loading
             val result = publicacaoRepository.atualizar(id, request)
-            _uiState.value = if (result.isSuccess) PublicacaoState.SucessoCriacao
-            else PublicacaoState.Erro(result.exceptionOrNull()?.message ?: "Erro ao atualizar")
+            _uiState.value = if (result.isSuccess) PublicacaoState.Sucesso
+                             else PublicacaoState.Erro(result.exceptionOrNull()?.message ?: "Erro ao atualizar")
         }
     }
 
@@ -64,8 +65,27 @@ class PublicacaoViewModel(
         viewModelScope.launch {
             _uiState.value = PublicacaoState.Loading
             val result = publicacaoRepository.deletar(id)
-            _uiState.value = if (result.isSuccess) PublicacaoState.SucessoDelete
-            else PublicacaoState.Erro(result.exceptionOrNull()?.message ?: "Erro ao deletar")
+            _uiState.value = if (result.isSuccess) {
+                PublicacaoState.SucessoDelete
+            } else {
+                PublicacaoState.Erro(result.exceptionOrNull()?.message ?: "Erro ao deletar")
+            }
+        }
+    }
+
+    private val _publicacaoSelecionada = MutableStateFlow<PublicacaoResponse?>(null)
+    val publicacaoSelecionada: StateFlow<PublicacaoResponse?> = _publicacaoSelecionada
+
+    fun buscarPublicacao(id: Long) {
+        viewModelScope.launch {
+            _uiState.value = PublicacaoState.Loading
+            val result = publicacaoRepository.buscarPorId(id)
+            if (result.isSuccess) {
+                _publicacaoSelecionada.value = result.getOrNull()
+                _uiState.value = PublicacaoState.Sucesso
+            } else {
+                _uiState.value = PublicacaoState.Erro(result.exceptionOrNull()?.message ?: "Erro ao buscar")
+            }
         }
     }
 }

@@ -1,30 +1,30 @@
 package com.example.burnbook
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,76 +32,72 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.burnbook.model.request.CadastroRequest
+import com.example.burnbook.viewmodel.AuthState
+import com.example.burnbook.viewmodel.AuthViewModel
 
 @Composable
-fun PaginaCadastro(navController: NavController){
+fun PaginaCadastro(navController: NavController, viewModel: AuthViewModel) {
 
-    var isDarkMode by remember {
-        mutableStateOf(false)
+    var isDarkMode by remember { mutableStateOf(false) }
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState) {
+        if (uiState is AuthState.Sucesso) {
+            navController.navigate("principal") {
+                popUpTo("cadastro") { inclusive = true }
+            }
+        }
     }
 
-
-
-    Scaffold (
-
+    Scaffold(
         topBar = {
             topBar(
                 isDarkMode = isDarkMode,
                 onToggle = { isDarkMode = !isDarkMode }
             )
         },
-
         bottomBar = {
             bottomBarSimples(isDarkMode)
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
-
-        ) {
-            innerPadding ->
+    ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    if (isDarkMode) Color(0xFF000000) else Color(0xFFE6E6E6)
-                )
+                .background(if (isDarkMode) Color(0xFF000000) else Color(0xFFE6E6E6))
                 .padding(innerPadding)
         ) {
-            cardCadastro(navController = navController, isDarkMode = isDarkMode)
-
+            cardCadastro(
+                navController = navController,
+                isDarkMode = isDarkMode,
+                uiState = uiState,
+                onCriarConta = { request -> viewModel.cadastrar(request) }
+            )
         }
     }
 }
 
-
 @Composable
-fun bottomBarSimples(isDarkMode: Boolean){
-    Surface (
-        color = if (isDarkMode) Color(0xFFDE425C) else Color(0xFFF65B75),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(60.dp)
-
-    ) {
-
-    }
-}
-
-@Composable
-fun cardCadastro(navController: NavController,isDarkMode: Boolean) {
-
+fun cardCadastro(
+    navController: NavController,
+    isDarkMode: Boolean,
+    uiState: AuthState,
+    onCriarConta: (CadastroRequest) -> Unit
+) {
     var nome by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var cpf by remember { mutableStateOf("") }
-    var dataNascimento by remember {mutableStateOf("")}
-    var user by remember {mutableStateOf("")}
-    var senha by remember {mutableStateOf("")}
+    var dataNascimento by remember { mutableStateOf("") }
+    var user by remember { mutableStateOf("") }
+    var senha by remember { mutableStateOf("") }
 
     Surface {
         Column(
@@ -128,219 +124,106 @@ fun cardCadastro(navController: NavController,isDarkMode: Boolean) {
                     ),
                 contentAlignment = Alignment.TopCenter
             ) {
-
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(top = 20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp) // Espaço entre os blocos de input
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
 
-                    Column(modifier = Modifier.width(319.dp)) {
-                        Text(
-                            text = "Nome:",
-                            fontFamily = fontTopicos,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 16.sp,
-                            color = if (isDarkMode) Color.White else Color.Black,
-                            modifier = Modifier.padding(start = 5.dp, bottom = 4.dp)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(48.dp)
-                                .background(
-                                    color = Color(0xF8FFFFFFF),
-                                    shape = RoundedCornerShape(12.dp)
-                                )
-                                .padding(horizontal = 15.dp),
-                            contentAlignment = Alignment.CenterStart
-                        ) {
-                            androidx.compose.foundation.text.BasicTextField(
-                                value = nome,
-                                onValueChange = { nome = it },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                    }
+                    CampoFormulario(
+                        label = "Nome:",
+                        value = nome,
+                        onValueChange = { nome = it },
+                        isDarkMode = isDarkMode
+                    )
 
-                    Column(modifier = Modifier.width(319.dp)) {
-                        Text(
-                            text = "Email:",
-                            fontFamily = fontTopicos,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 16.sp,
-                            color = if (isDarkMode) Color.White else Color.Black,
-                            modifier = Modifier.padding(start = 5.dp, bottom = 4.dp)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(48.dp)
-                                .background(
-                                    color = Color(0xF8FFFFFFF),
-                                    shape = RoundedCornerShape(12.dp)
-                                )
-                                .padding(horizontal = 15.dp),
-                            contentAlignment = Alignment.CenterStart
-                        ) {
-                            androidx.compose.foundation.text.BasicTextField(
-                                value = email,
-                                onValueChange = { email = it },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                    }
+                    CampoFormulario(
+                        label = "Email:",
+                        value = email,
+                        onValueChange = { email = it },
+                        isDarkMode = isDarkMode
+                    )
 
-                    Column(modifier = Modifier.width(319.dp)) {
-                        Text(
-                            text = "CPF:",
-                            fontFamily = fontTopicos,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 16.sp,
-                            color = if (isDarkMode) Color.White else Color.Black,
-                            modifier = Modifier.padding(start = 5.dp, bottom = 4.dp)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(48.dp)
-                                .background(
-                                    color = Color(0xF8FFFFFFF),
-                                    shape = RoundedCornerShape(12.dp)
-                                )
-                                .padding(horizontal = 15.dp),
-                            contentAlignment = Alignment.CenterStart
-                        ) {
-                            androidx.compose.foundation.text.BasicTextField(
-                                value = cpf,
-                                onValueChange = { cpf = it },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                    }
+                    CampoFormulario(
+                        label = "CPF:",
+                        value = cpf,
+                        onValueChange = { cpf = it },
+                        isDarkMode = isDarkMode
+                    )
 
-                    Column(modifier = Modifier.width(319.dp)) {
-                        Text(
-                            text = "Data de nascimento:",
-                            fontFamily = fontTopicos,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 16.sp,
-                            color = if (isDarkMode) Color.White else Color.Black,
-                            modifier = Modifier.padding(start = 5.dp, bottom = 4.dp)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(48.dp)
-                                .background(
-                                    color = Color(0xF8FFFFFFF),
-                                    shape = RoundedCornerShape(12.dp)
-                                )
-                                .padding(horizontal = 15.dp),
-                            contentAlignment = Alignment.CenterStart
-                        ) {
-                            androidx.compose.foundation.text.BasicTextField(
-                                value = dataNascimento,
-                                onValueChange = { dataNascimento = it },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                    }
+                    CampoFormulario(
+                        label = "Data de nascimento:",
+                        value = dataNascimento,
+                        onValueChange = { dataNascimento = it },
+                        isDarkMode = isDarkMode
+                    )
 
-                    Column(modifier = Modifier.width(319.dp)) {
-                        Text(
-                            text = "Nome de usuário:",
-                            fontFamily = fontTopicos,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 16.sp,
-                            color = if (isDarkMode) Color.White else Color.Black,
-                            modifier = Modifier.padding(start = 5.dp, bottom = 4.dp)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(48.dp)
-                                .background(
-                                    color = Color(0xF8FFFFFFF),
-                                    shape = RoundedCornerShape(12.dp)
-                                )
-                                .padding(horizontal = 15.dp),
-                            contentAlignment = Alignment.CenterStart
-                        ) {
-                            androidx.compose.foundation.text.BasicTextField(
-                                value = user,
-                                onValueChange = { user = it },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                    }
+                    CampoFormulario(
+                        label = "Nome de usuário:",
+                        value = user,
+                        onValueChange = { user = it },
+                        isDarkMode = isDarkMode
+                    )
 
-                    Column(modifier = Modifier.width(319.dp)) {
-                        Text(
-                            text = "Senha:",
-                            fontFamily = fontTopicos,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 16.sp,
-                            color = if (isDarkMode) Color.White else Color.Black,
-                            modifier = Modifier.padding(start = 5.dp, bottom = 4.dp)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(48.dp)
-                                .background(
-                                    color = Color(0xF8FFFFFFF),
-                                    shape = RoundedCornerShape(12.dp)
-                                )
-                                .padding(horizontal = 15.dp),
-                            contentAlignment = Alignment.CenterStart
-                        ) {
-                            androidx.compose.foundation.text.BasicTextField(
-                                value = senha,
-                                onValueChange = { senha = it },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                    }
-
+                    CampoFormulario(
+                        label = "Senha:",
+                        value = senha,
+                        onValueChange = { senha = it },
+                        isDarkMode = isDarkMode,
+                        isSenha = true
+                    )
                 }
-
-
-
             }
-
 
             Spacer(modifier = Modifier.height(17.dp))
 
-
             Button(
-                onClick = { /* aplicar a lógica da nss api*/ },
+                onClick = {
+                    onCriarConta(
+                        CadastroRequest(
+                            username = user,
+                            nome = nome,
+                            dataNascimento = dataNascimento,
+                            email = email,
+                            senha = senha,
+                            cpf = cpf
+                        )
+                    )
+                },
+                enabled = uiState !is AuthState.Loading,
                 modifier = Modifier
                     .width(200.dp)
                     .padding(bottom = 17.dp)
                     .height(40.dp),
                 shape = RoundedCornerShape(12.dp),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp),
+                contentPadding = PaddingValues(0.dp),
                 colors = buttonColors(
                     containerColor = if (isDarkMode) Color(0xFFFF8EA1) else Color(0xFFF65B75)
                 )
             ) {
-                Text(
-                    text = "CRIAR CONTA",
-                    color = if (isDarkMode) Color.Black else Color.White,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = fontTopicos
-                )
+                if (uiState is AuthState.Loading) {
+                    CircularProgressIndicator(
+                        color = Color.White,
+                        strokeWidth = 2.dp,
+                        modifier = Modifier.height(20.dp).width(20.dp)
+                    )
+                } else {
+                    Text(
+                        text = "CRIAR CONTA",
+                        color = if (isDarkMode) Color.Black else Color.White,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = fontTopicos
+                    )
+                }
             }
 
             Row(
                 modifier = Modifier
                     .padding(end = 10.dp)
                     .fillMaxWidth(),
-
                 horizontalArrangement = Arrangement.End
             ) {
                 Text(
@@ -351,7 +234,7 @@ fun cardCadastro(navController: NavController,isDarkMode: Boolean) {
                 )
                 TextButton(
                     onClick = { navController.navigate("login") },
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp),
+                    contentPadding = PaddingValues(0.dp),
                     modifier = Modifier.height(20.dp)
                 ) {
                     Text(
@@ -363,14 +246,64 @@ fun cardCadastro(navController: NavController,isDarkMode: Boolean) {
                 }
             }
 
-
-
-
-
+            if (uiState is AuthState.Erro) {
+                Text(
+                    text = (uiState as AuthState.Erro).mensagem,
+                    color = Color.Red,
+                    fontSize = 13.sp,
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
+                )
+            }
         }
     }
 }
 
+@Composable
+fun bottomBarSimples(isDarkMode: Boolean) {
+    Surface(
+        color = if (isDarkMode) Color(0xFFDE425C) else Color(0xFFF65B75),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp)
+    ) {}
+}
 
+@Composable
+fun CampoFormulario(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    isDarkMode: Boolean,
+    isSenha: Boolean = false
+) {
+    Column(modifier = Modifier.width(319.dp)) {
+        Text(
+            text = label,
+            fontFamily = fontTopicos,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 16.sp,
+            color = if (isDarkMode) Color.White else Color.Black,
+            modifier = Modifier.padding(start = 5.dp, bottom = 4.dp)
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .background(
+                    color = Color(0xF8FFFFFFF),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .padding(horizontal = 15.dp),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                visualTransformation = if (isSenha) PasswordVisualTransformation() else androidx.compose.ui.text.input.VisualTransformation.None,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
 val fontCadastro = FontFamily(Font(R.font.kadwa_regular))
 val fontTopicos = FontFamily(Font(R.font.kaisei_harunoumi))

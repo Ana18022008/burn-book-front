@@ -36,44 +36,29 @@ class FeedViewModel(
         isCarregando = true
         viewModelScope.launch {
             try {
-                // Aqui chamamos o seu listarFeed
                 val result = publicacaoRepository.listarFeed(paginaAtual)
 
                 if (result.isSuccess) {
-                    // ACESSO AO CONTEÚDO: Ajuste 'content' para o nome exato do campo no seu PageResponse
                     val pageResponse = result.getOrNull()
                     val novasPublicacoes = pageResponse?.content ?: emptyList()
 
-                    // Verifica se o servidor avisou que é a última página
-                    // (ajuste 'last' ou 'totalPages' conforme seu modelo PageResponse)
                     if (novasPublicacoes.isEmpty() || pageResponse?.last == true) {
                         todasCarregadas = true
                     }
 
                     if (novasPublicacoes.isNotEmpty()) {
-                        val listaAtual = if (_uiState.value is FeedState.Sucesso) {
-                            (_uiState.value as FeedState.Sucesso).publicacoes
-                        } else {
-                            emptyList()
-                        }
-
-                        // Filtro de segurança contra duplicados
                         val listaFiltrada = novasPublicacoes.filter { nova ->
-                            listaAtual.none { atual -> atual.id == nova.id }
+                            publicacoes.none { atual -> atual.id == nova.id }
                         }
 
-                        _uiState.value = FeedState.Sucesso(listaAtual + listaFiltrada)
+                        publicacoes.addAll(listaFiltrada)
+
+                        _uiState.value = FeedState.Sucesso(publicacoes.toList())
                         paginaAtual++
-                    }
-                } else {
-                    // Trata erro de 403 ou outros problemas de rede
-                    if (_uiState.value !is FeedState.Sucesso) {
-                        _uiState.value =
-                            FeedState.Erro("Erro: ${result.exceptionOrNull()?.message}")
+                    } else if (paginaAtual == 0) {
+                        _uiState.value = FeedState.Sucesso(emptyList())
                     }
                 }
-            } catch (e: Exception) {
-                _uiState.value = FeedState.Erro(e.message ?: "Erro desconhecido")
             } finally {
                 isCarregando = false
             }
@@ -82,7 +67,9 @@ class FeedViewModel(
     fun recarregar() {
         publicacoes.clear()
         paginaAtual = 0
+        todasCarregadas = false
         ultimaPagina = false
+        _uiState.value = FeedState.Loading
         carregarMais()
     }
 
@@ -100,6 +87,13 @@ class FeedViewModel(
                     _uiState.value = FeedState.Sucesso(publicacoes.toList())
                 }
             }
+        }
+    }
+    fun removerPostLocal(id: Long) {
+        val removido = publicacoes.removeAll { it.id == id }
+
+        if (removido) {
+            _uiState.value = FeedState.Sucesso(publicacoes.toList())
         }
     }
 }
