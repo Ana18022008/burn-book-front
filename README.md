@@ -19,7 +19,7 @@ O **Burn Book** é uma aplicação Android moderna focada em interações sociai
 
 ---
 
-## ✨ Funcionalidades
+##  Funcionalidades
 
 | Funcionalidade | Descrição |
 | --- | --- |
@@ -32,7 +32,7 @@ O **Burn Book** é uma aplicação Android moderna focada em interações sociai
 
 ---
 
-## 🛠️ Stack Tecnológica
+##  Stack Tecnológica
 
 O desenvolvimento do Burn Book foi pautado no uso das ferramentas mais atuais e recomendadas pelo Google para o ecossistema Android:
 
@@ -45,7 +45,7 @@ O desenvolvimento do Burn Book foi pautado no uso das ferramentas mais atuais e 
 
 ---
 
-## 🎨 Identidade Visual
+##  Identidade Visual
 
 O projeto utiliza uma paleta de cores personalizada e uma tipografia única para proporcionar uma experiência de leitura agradável e imersiva.
 
@@ -54,7 +54,7 @@ O projeto utiliza uma paleta de cores personalizada e uma tipografia única para
 
 ---
 
-## 🚀 Como Executar o Projeto
+##  Como Executar o Projeto
 
 Para rodar o Burn Book localmente em sua máquina, siga os passos abaixo:
 
@@ -101,13 +101,13 @@ com.example.burnbook/
 
 ---
 
-## 📝 Licença
+##  Licença
 
 Este projeto está sob a licença **MIT**. Veja o arquivo `LICENSE` para mais detalhes.
 
 ---
 
-## 👨‍💻 Desenvolvido por
+##  Desenvolvido por
 
 * Ana Ribeiro
 * Emanuelle Hostin
