@@ -12,13 +12,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,67 +30,65 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-
-//MODO CLARO E MODO ESCURO JÁ EDITADOS
+import com.example.burnbook.viewmodel.AuthState
+import com.example.burnbook.viewmodel.AuthViewModel
 
 @Composable
-fun PaginaLogin(navController: NavController,
-                isDarkMode: Boolean,
-                onToggleDarkMode: () -> Unit ){
+fun PaginaLogin(navController: NavController, viewModel: AuthViewModel) {
 
+    var isDarkMode by remember { mutableStateOf(false) }
+    val uiState by viewModel.uiState.collectAsState()
 
+    LaunchedEffect(uiState) {
+        if (uiState is AuthState.Sucesso) {
+            navController.navigate("principal") {
+                popUpTo("login") { inclusive = true }
+            }
+        }
+    }
 
-
-
-    Scaffold (
-
-
-        topBar = {
-            topBar(
-                isDarkMode = isDarkMode,
-                onToggle = onToggleDarkMode
-            )
-        },
-
-
-        bottomBar = {
-            bottomBarSimples(isDarkMode)
-        },
-
-        ) {
-
-            innerPadding ->
+    Scaffold(
+        topBar = { topBar(isDarkMode = isDarkMode, onToggle = { isDarkMode = !isDarkMode }) },
+        bottomBar = { bottomBarSimples(isDarkMode) }
+    ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(if (isDarkMode) Color(0xFF111111) else Color(0xFFE6E6E6))
+                .background(if (isDarkMode) Color(0xFF000000) else Color(0xFFE6E6E6))
                 .padding(innerPadding)
         ) {
-            cardLogin(navController = navController, isDarkMode = isDarkMode)
-
+            cardLogin(
+                navController = navController,
+                isDarkMode = isDarkMode,
+                uiState = uiState,
+                onEntrar = { email, senha -> viewModel.login(email, senha) }
+            )
         }
     }
 }
 
 @Composable
-fun cardLogin(navController: NavController, isDarkMode: Boolean) {
-    var nome by remember { mutableStateOf("") }
+fun cardLogin(
+    navController: NavController,
+    isDarkMode: Boolean,
+    uiState: AuthState,
+    onEntrar: (String, String) -> Unit
+) {
+    var email by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(if (isDarkMode) Color(0xFF111111) else Color(0xFFE6E6E6)),
+            .background(if (isDarkMode) Color(0xFF000000) else Color(0xFFE6E6E6)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            modifier = Modifier.padding(
-                top = 115.dp,
-                bottom = 0.dp
-            ),
+            modifier = Modifier.padding(top = 115.dp, bottom = 0.dp),
             text = "LOGIN",
             fontSize = 40.sp,
             fontFamily = fontCadastro,
@@ -104,15 +105,17 @@ fun cardLogin(navController: NavController, isDarkMode: Boolean) {
                 ),
             contentAlignment = Alignment.TopCenter
         ) {
-
             Column(
-                modifier = Modifier.fillMaxSize().padding(top = 20.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(26.dp)
             ) {
+
                 Column(modifier = Modifier.width(319.dp)) {
                     Text(
-                        text = "Nome de usuário:",
+                        text = "Email:",
                         fontFamily = fontTopicos,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
@@ -123,20 +126,18 @@ fun cardLogin(navController: NavController, isDarkMode: Boolean) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(48.dp)
-                            .background(
-                                color = Color(0xF8FFFFFFF),
-                                shape = RoundedCornerShape(12.dp)
-                            )
+                            .background(color = Color(0xF8FFFFFFF), shape = RoundedCornerShape(12.dp))
                             .padding(horizontal = 15.dp),
                         contentAlignment = Alignment.CenterStart
                     ) {
-                        androidx.compose.foundation.text.BasicTextField(
-                            value = nome,
-                            onValueChange = { nome = it },
+                        BasicTextField(
+                            value = email,
+                            onValueChange = { email = it },
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
+
 
                 Column(modifier = Modifier.width(319.dp)) {
                     Text(
@@ -151,23 +152,23 @@ fun cardLogin(navController: NavController, isDarkMode: Boolean) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(48.dp)
-                            .background(
-                                color = Color(0xF8FFFFFFF),
-                                shape = RoundedCornerShape(12.dp)
-                            )
+                            .background(color = Color(0xF8FFFFFFF), shape = RoundedCornerShape(12.dp))
                             .padding(horizontal = 15.dp),
                         contentAlignment = Alignment.CenterStart
                     ) {
-                        androidx.compose.foundation.text.BasicTextField(
+                        BasicTextField(
                             value = senha,
                             onValueChange = { senha = it },
+                            visualTransformation = PasswordVisualTransformation(),
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
 
+
                 Button(
-                    onClick = { /* aplicar a lógica da nss api*/ },
+                    onClick = { onEntrar(email, senha) },
+                    enabled = uiState !is AuthState.Loading,
                     modifier = Modifier
                         .width(200.dp)
                         .padding(bottom = 17.dp)
@@ -178,26 +179,30 @@ fun cardLogin(navController: NavController, isDarkMode: Boolean) {
                         containerColor = if (isDarkMode) Color(0xFFFF8EA1) else Color(0xFFF65B75)
                     )
                 ) {
-                    Text(
-                        text = "ENTRAR",
-                        color = if (isDarkMode) Color.Black else Color.White,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = fontTopicos
-                    )
+                    if (uiState is AuthState.Loading) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            strokeWidth = 2.dp,
+                            modifier = Modifier.height(20.dp).width(20.dp)
+                        )
+                    } else {
+                        Text(
+                            text = "ENTRAR",
+                            color = if (isDarkMode) Color.Black else Color.White,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = fontTopicos
+                        )
+                    }
                 }
-
             }
-
-
-
         }
+
 
         Row(
             modifier = Modifier
                 .padding(end = 45.dp, top = 8.dp)
                 .fillMaxWidth(),
-
             horizontalArrangement = Arrangement.End
         ) {
             Text(
@@ -218,6 +223,15 @@ fun cardLogin(navController: NavController, isDarkMode: Boolean) {
                     fontWeight = FontWeight.SemiBold
                 )
             }
+        }
+
+        if (uiState is AuthState.Erro) {
+            Text(
+                text = (uiState as AuthState.Erro).mensagem,
+                color = Color.Red,
+                fontSize = 13.sp,
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
+            )
         }
     }
 }

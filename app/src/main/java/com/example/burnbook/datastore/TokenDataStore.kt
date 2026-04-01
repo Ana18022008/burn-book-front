@@ -2,6 +2,7 @@ package com.example.burnbook.datastore
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
@@ -23,5 +24,15 @@ class TokenDataStore(private val context: Context) {
 
     fun getToken(): Flow<String?> {
         return context.dataStore.data.map { it[TOKEN_KEY] }
+    }
+
+    private val USUARIO_ID_KEY = longPreferencesKey("usuario_id")
+
+    suspend fun salvarUsuarioId(id: Long) {
+        context.dataStore.edit { it[USUARIO_ID_KEY] = id }
+    }
+
+    fun getUsuarioId(): Flow<Long?> {
+        return context.dataStore.data.map { it[USUARIO_ID_KEY] }
     }
 }

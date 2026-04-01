@@ -25,4 +25,6 @@ class AuthRepository(private val api: AuthApi, private val dataStore: TokenDataS
     suspend fun logout() {
         dataStore.limparToken()
     }
+
+
 }
