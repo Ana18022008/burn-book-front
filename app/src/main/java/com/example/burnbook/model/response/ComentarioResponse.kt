@@ -5,7 +5,8 @@ data class ComentarioResponse(
     val autorNome: String,
     val comentarioPai: ComentarioPaiResumo?,
     val conteudo: String,
-    val dataHora: String
+    val dataHora: String,
+    val publicacaoId:Long
 )
 
 data class ComentarioPaiResumo(
