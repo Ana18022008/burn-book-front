@@ -22,27 +22,31 @@ import com.example.burnbook.cinzel
 import com.example.burnbook.inter
 import com.example.burnbook.model.request.ComentarioRequest
 import com.example.burnbook.model.response.ComentarioResponse
+import com.example.burnbook.model.response.PublicacaoResponse
 import com.example.burnbook.topBar
 import com.example.burnbook.viewmodel.ComentarioState
 import com.example.burnbook.viewmodel.ComentarioViewModel
+import com.example.burnbook.viewmodel.PublicacaoViewModel
 
 @Composable
 fun PaginaComentarios(
     navController: NavController,
     viewModel: ComentarioViewModel,
+    publicacaoViewModel: PublicacaoViewModel,
     publicacaoId: Long
 ) {
     var isDarkMode by remember { mutableStateOf(false) }
 
 
     val state by viewModel.comentariosState.collectAsState()
-
+    val publicacaoBase by publicacaoViewModel.publicacaoSelecionada.collectAsState()
 
     var textoComentario by remember { mutableStateOf("") }
 
 
     LaunchedEffect(publicacaoId) {
         viewModel.carregarComentarios(publicacaoId)
+        publicacaoViewModel.buscarPublicacao(publicacaoId)
     }
 
     Scaffold(
@@ -73,8 +77,8 @@ fun PaginaComentarios(
                     is ComentarioState.Sucesso -> {
                         ListaDeComentarios(
                             isDarkMode = isDarkMode,
-                            comentarios = s.comentarios
-                        )
+                            publicacao = publicacaoBase,
+                            comentarios = (state as? ComentarioState.Sucesso)?.comentarios ?: emptyList()                        )
                     }
 
 
@@ -113,13 +117,15 @@ fun PaginaComentarios(
 }
 
 @Composable
-fun ListaDeComentarios(isDarkMode: Boolean, comentarios: List<ComentarioResponse>) {
+fun ListaDeComentarios(isDarkMode: Boolean, publicacao: PublicacaoResponse?, comentarios: List<ComentarioResponse>) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        item { PostPrincipalCard(isDarkMode) }
+        publicacao?.let {
+            item { PostPrincipalCard(isDarkMode, it) }
+        }
 
         items(comentarios) { comentario ->
             ItemComentarioAPI(comentario, isDarkMode)
@@ -201,7 +207,7 @@ fun ItemComentarioAPI(comentario: ComentarioResponse, isDarkMode: Boolean) {
 }
 
 @Composable
-fun PostPrincipalCard(isDarkMode: Boolean) {
+fun PostPrincipalCard(isDarkMode: Boolean, publicacao: PublicacaoResponse) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
@@ -219,13 +225,15 @@ fun PostPrincipalCard(isDarkMode: Boolean) {
                     tint = if (isDarkMode) Color.White else Color.Black
                 )
                 Spacer(Modifier.width(8.dp))
-                Text(
-                    "@Emanuelle_Hostin",
-                    fontWeight = FontWeight.Medium,
-                    color = if (isDarkMode) Color.White else Color.Black,
-                    fontFamily = inter,
-                    fontSize = 15.sp
-                )
+                publicacao.usernameAutor?.let {
+                    Text(
+                        it,
+                        fontWeight = FontWeight.Medium,
+                        color = if (isDarkMode) Color.White else Color.Black,
+                        fontFamily = inter,
+                        fontSize = 15.sp
+                    )
+                }
             }
             Text(
                 "11/10/2025",
@@ -251,7 +259,7 @@ fun PostPrincipalCard(isDarkMode: Boolean) {
                     .padding(16.dp)
             ) {
                 Text(
-                    "QUE DIA CANSATIVO\nNÃO QUERO MAIS TRABALHAR\n#EXAUSTA",
+                    publicacao.conteudo,
                     fontWeight = FontWeight.Medium,
                     color = if (isDarkMode) Color.White else Color.Black,
                     fontFamily = inter

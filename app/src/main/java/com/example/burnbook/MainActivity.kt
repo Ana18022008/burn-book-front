@@ -35,6 +35,7 @@ import com.example.burnbook.viewmodel.AuthViewModel
 import com.example.burnbook.viewmodel.ComentarioViewModel
 import com.example.burnbook.viewmodel.FeedViewModel
 import com.example.burnbook.viewmodel.PerfilViewModel
+import com.example.burnbook.viewmodel.PublicacaoViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,6 +67,7 @@ class MainActivity : ComponentActivity() {
                 val feedViewModel: FeedViewModel = viewModel(factory = factory)
                 val perfilViewModel: PerfilViewModel = viewModel(factory = factory)
                 val comentarioViewModel: ComentarioViewModel = viewModel(factory = factory)
+                val publicacaoViewModel: PublicacaoViewModel = viewModel(factory = factory)
 
                 LaunchedEffect(token) {
                     if (token == null) {
@@ -94,7 +96,7 @@ class MainActivity : ComponentActivity() {
 
                     composable("comentarios/{publicacaoId}") { backStackEntry ->
                         val publicacaoId = backStackEntry.arguments?.getString("publicacaoId")?.toLongOrNull() ?: return@composable
-                        PaginaComentarios(navController, comentarioViewModel, publicacaoId)
+                        PaginaComentarios(navController, comentarioViewModel, publicacaoViewModel = publicacaoViewModel, publicacaoId)
                     }
                 }
             }

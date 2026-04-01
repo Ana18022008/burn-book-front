@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.burnbook.model.request.PublicacaoRequest
 import com.example.burnbook.model.response.CategoriaResponse
+import com.example.burnbook.model.response.PublicacaoResponse
 import com.example.burnbook.repository.CategoriaRepository
 import com.example.burnbook.repository.PublicacaoRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -61,6 +62,22 @@ class PublicacaoViewModel(
             val result = publicacaoRepository.deletar(id)
             _uiState.value = if (result.isSuccess) PublicacaoState.Sucesso
                              else PublicacaoState.Erro(result.exceptionOrNull()?.message ?: "Erro ao deletar")
+        }
+    }
+
+    private val _publicacaoSelecionada = MutableStateFlow<PublicacaoResponse?>(null)
+    val publicacaoSelecionada: StateFlow<PublicacaoResponse?> = _publicacaoSelecionada
+
+    fun buscarPublicacao(id: Long) {
+        viewModelScope.launch {
+            _uiState.value = PublicacaoState.Loading
+            val result = publicacaoRepository.buscarPorId(id)
+            if (result.isSuccess) {
+                _publicacaoSelecionada.value = result.getOrNull()
+                _uiState.value = PublicacaoState.Sucesso
+            } else {
+                _uiState.value = PublicacaoState.Erro(result.exceptionOrNull()?.message ?: "Erro ao buscar")
+            }
         }
     }
 }
