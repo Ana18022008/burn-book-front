@@ -1,29 +1,12 @@
 package com.example.burnbook
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,66 +14,138 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.burnbook.model.response.PublicacaoResponse
+import com.example.burnbook.ui.inter
+import com.example.burnbook.viewmodel.PerfilState
+import com.example.burnbook.viewmodel.PerfilViewModel
+import com.example.burnbook.viewmodel.PublicacaoState
+import com.example.burnbook.viewmodel.PublicacaoViewModel
 
 @Composable
-fun PaginaPostsUsuario (navController: NavController) {
-
+fun PaginaPostsUsuario(
+    navController: NavController,
+    perfilViewModel: PerfilViewModel,
+    publicacaoViewModel: PublicacaoViewModel,
+    usuarioId: Long?
+) {
     var isDarkMode by remember { mutableStateOf(false) }
+    val perfilState by perfilViewModel.perfilState.collectAsState()
+    val publicacaoState by publicacaoViewModel.uiState.collectAsState()
 
-    Scaffold (
+    LaunchedEffect(usuarioId) {
+        usuarioId?.let { perfilViewModel.carregarPerfil(it) }
+    }
 
-        topBar = {
-            topBar(
-                isDarkMode = isDarkMode,
-                onToggle = { isDarkMode = !isDarkMode }
-            )
-        },
+    // Reage APENAS ao SucessoDelete — não confunde com criação
+    LaunchedEffect(publicacaoState) {
+        if (publicacaoState is PublicacaoState.SucessoDelete) {
+            usuarioId?.let {
+                perfilViewModel.recarregarPublicacoes(it)
+            }
+            publicacaoViewModel.resetarState()
+        }
+    }
 
-        bottomBar = {
-            bottomBar(isDarkMode, navController)
-        },
-
-        ) {
-
-            innerPadding ->
+    Scaffold(
+        topBar = { topBar(isDarkMode = isDarkMode, onToggle = { isDarkMode = !isDarkMode }) },
+        bottomBar = { bottomBar(isDarkMode, navController) }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    if (isDarkMode) Color(0xFF505050) else Color(0xFFE6E6E6)
-                )
-                .padding(innerPadding),
+                .background(if (isDarkMode) Color(0xFF505050) else Color(0xFFE6E6E6))
+                .padding(innerPadding)
         ) {
-
-
-            LazyColumn (
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ){
-
-                item {
-                    titulo(isDarkMode)
+            when (val state = perfilState) {
+                is PerfilState.Loading -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = Color(0xFFF65B75))
+                    }
                 }
 
-                items(3) {
-                    cardSeusPosts(isDarkMode)
+                is PerfilState.Erro -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(
+                            text = state.mensagem,
+                            color = Color(0xFFC0392B),
+                            fontSize = 14.sp,
+                            fontFamily = inter,
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+                        )
+                    }
+                }
+
+                is PerfilState.Sucesso -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        item { titulo(isDarkMode) }
+
+                        if (state.publicacoes.isEmpty()) {
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 40.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "Você ainda não fez nenhuma publicação.",
+                                        color = if (isDarkMode) Color.LightGray else Color(0xFF6D4C41),
+                                        fontSize = 14.sp,
+                                        fontFamily = inter
+                                    )
+                                }
+                            }
+                        } else {
+                            items(state.publicacoes) { publicacao ->
+                                cardSeusPosts(
+                                    isDarkMode = isDarkMode,
+                                    publicacao = publicacao,
+                                    onDeletar = { publicacaoViewModel.deletar(publicacao.id) },
+                                    onVerComentarios = {
+                                        navController.navigate("comentarios/${publicacao.id}")
+                                    }
+                                )
+                            }
+
+                            if (state.temMaisPaginas) {
+                                item {
+                                    Box(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        TextButton(onClick = {
+                                            usuarioId?.let { perfilViewModel.carregarPublicacoes(it) }
+                                        }) {
+                                            Text(
+                                                text = "Carregar mais",
+                                                color = Color(0xFFF65B75),
+                                                fontFamily = inter
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
-
         }
     }
 }
 
 @Composable
-fun titulo (isDarkMode: Boolean){
-    Row (
+fun titulo(isDarkMode: Boolean) {
+    Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier
             .padding(vertical = 16.dp)
             .fillMaxWidth()
-    ){
+    ) {
         Text(
             text = "Seus Posts",
             fontFamily = Cinzel,
@@ -98,24 +153,23 @@ fun titulo (isDarkMode: Boolean){
             color = if (isDarkMode) Color.White else Color.Black
         )
     }
-
 }
-@Composable
-fun cardSeusPosts(isDarkMode: Boolean) {
 
-    Surface (
+@Composable
+fun cardSeusPosts(
+    isDarkMode: Boolean,
+    publicacao: PublicacaoResponse,
+    onDeletar: () -> Unit,
+    onVerComentarios: () -> Unit
+) {
+    Surface(
         color = Color.White,
         modifier = Modifier
             .fillMaxWidth()
-            .height(315.dp),
+            .wrapContentHeight(),
         shape = RoundedCornerShape(10.dp)
-    ){
-
-        Column (
-            modifier = Modifier
-                .fillMaxWidth()
-        ){
-
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -123,9 +177,7 @@ fun cardSeusPosts(isDarkMode: Boolean) {
                     .padding(start = 16.dp, end = 16.dp, top = 8.dp)
                     .fillMaxWidth()
             ) {
-
-                Row {
-
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         painter = painterResource(id = R.drawable.image_usuario),
                         contentDescription = "Ícone do usuário",
@@ -134,37 +186,44 @@ fun cardSeusPosts(isDarkMode: Boolean) {
                             .height(25.dp)
                             .padding(end = 8.dp)
                     )
-
+                    Text(
+                        text = if (publicacao.isAnonimo) "Anônimo" else (publicacao.usernameAutor ?: ""),
+                        fontSize = 13.sp,
+                        fontFamily = CinzelBold,
+                        color = Color(0xFF2C2C2C)
+                    )
                 }
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-
                     Icon(
                         painter = painterResource(id = R.drawable.icone_gostei),
-                        contentDescription = "Ícone de gostei/like",
+                        contentDescription = "Curtidas",
                         tint = Color.Unspecified,
                         modifier = Modifier.height(30.dp)
                     )
-
                     Text(
-                        text = "01",
+                        text = publicacao.quantidadeCurtidas.toString(),
                         fontSize = 15.sp,
                         modifier = Modifier.padding(end = 8.dp),
                         fontFamily = CinzelBold
                     )
-
-                    Icon(
-                        painter = painterResource(id = R.drawable.icone_comentarios),
-                        contentDescription = "Ícone de comentários",
-                        tint = Color.Unspecified,
-                        modifier = Modifier.height(20.dp)
-                    )
-
+                    IconButton(
+                        onClick = onVerComentarios,
+                        modifier = Modifier.size(30.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.icone_comentarios),
+                            contentDescription = "Ver comentários",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.height(20.dp)
+                        )
+                    }
                 }
             }
+
             HorizontalDivider(
                 modifier = Modifier
                     .padding(vertical = 8.dp)
@@ -174,45 +233,37 @@ fun cardSeusPosts(isDarkMode: Boolean) {
             )
 
             Text(
-                text = "11/10/2025",
-                modifier = Modifier
-                    .padding(horizontal = 16.dp),
+                text = publicacao.categoriaNome,
+                modifier = Modifier.padding(horizontal = 16.dp),
                 fontSize = 14.sp,
-                fontFamily = CinzelBold
+                fontFamily = CinzelBold,
+                color = Color(0xFFF65B75)
             )
+
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(210.dp)
-                    .padding(end = 16.dp, start = 16.dp),
+                    .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 8.dp),
                 color = if (isDarkMode) Color(0xFF505050) else Color(0xFFE6E6E6),
                 shape = RoundedCornerShape(bottomEnd = 10.dp, bottomStart = 10.dp)
-
             ) {
                 Text(
-                    text = "Lorem Ipsum is simply dummy text of the printing and typesetting " +
-                            "industry. Lorem Ipsum has been the industry's standard dummy text ever " +
-                            "since the 1500s, when an unknown printer took a galley of type and " +
-                            "scrambled it to make a type specimen book. Lorem Ipsum is simply dummy text" +
-                            " of the printing and typesetting industry.",
+                    text = publicacao.conteudo,
                     modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp),
                     color = if (isDarkMode) Color.White else Color(0xFF2C2C2C),
                     fontSize = 15.sp
                 )
             }
-            Row (
+
+            Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.End
-            ){
-
-                IconButton(
-                    onClick = {
-                    },
-                ) {
+            ) {
+                IconButton(onClick = onDeletar) {
                     Icon(
                         painter = painterResource(id = R.drawable.lixeira),
-                        contentDescription = "Ícone de lixeira",
+                        contentDescription = "Deletar publicação",
                         tint = Color.Unspecified,
                         modifier = Modifier.height(18.dp)
                     )

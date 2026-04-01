@@ -13,7 +13,8 @@ import kotlinx.coroutines.launch
 sealed class PublicacaoState {
     object Idle : PublicacaoState()
     object Loading : PublicacaoState()
-    object Sucesso : PublicacaoState()
+    object SucessoCriacao : PublicacaoState()
+    object SucessoDelete : PublicacaoState()
     data class Erro(val mensagem: String) : PublicacaoState()
 }
 
@@ -30,19 +31,23 @@ class PublicacaoViewModel(
 
     init { carregarCategorias() }
 
-    private fun carregarCategorias() {
+    fun carregarCategorias() {
         viewModelScope.launch {
             val result = categoriaRepository.listarTodas()
             if (result.isSuccess) _categorias.value = result.getOrNull()!!
         }
     }
 
+    fun resetarState() {
+        _uiState.value = PublicacaoState.Idle
+    }
+
     fun criar(request: PublicacaoRequest) {
         viewModelScope.launch {
             _uiState.value = PublicacaoState.Loading
             val result = publicacaoRepository.criar(request)
-            _uiState.value = if (result.isSuccess) PublicacaoState.Sucesso
-                             else PublicacaoState.Erro(result.exceptionOrNull()?.message ?: "Erro ao criar")
+            _uiState.value = if (result.isSuccess) PublicacaoState.SucessoCriacao
+            else PublicacaoState.Erro(result.exceptionOrNull()?.message ?: "Erro ao criar")
         }
     }
 
@@ -50,8 +55,8 @@ class PublicacaoViewModel(
         viewModelScope.launch {
             _uiState.value = PublicacaoState.Loading
             val result = publicacaoRepository.atualizar(id, request)
-            _uiState.value = if (result.isSuccess) PublicacaoState.Sucesso
-                             else PublicacaoState.Erro(result.exceptionOrNull()?.message ?: "Erro ao atualizar")
+            _uiState.value = if (result.isSuccess) PublicacaoState.SucessoCriacao
+            else PublicacaoState.Erro(result.exceptionOrNull()?.message ?: "Erro ao atualizar")
         }
     }
 
@@ -59,8 +64,8 @@ class PublicacaoViewModel(
         viewModelScope.launch {
             _uiState.value = PublicacaoState.Loading
             val result = publicacaoRepository.deletar(id)
-            _uiState.value = if (result.isSuccess) PublicacaoState.Sucesso
-                             else PublicacaoState.Erro(result.exceptionOrNull()?.message ?: "Erro ao deletar")
+            _uiState.value = if (result.isSuccess) PublicacaoState.SucessoDelete
+            else PublicacaoState.Erro(result.exceptionOrNull()?.message ?: "Erro ao deletar")
         }
     }
 }
