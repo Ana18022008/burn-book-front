@@ -1,35 +1,30 @@
 package com.example.burnbook.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.burnbook.Kadwa
-import com.example.burnbook.R
 import com.example.burnbook.bottomBar
 import com.example.burnbook.cinzel
 import com.example.burnbook.inter
-import com.example.burnbook.viewmodel.ComentarioViewModel
-import com.example.burnbook.viewmodel.ComentarioState
+import com.example.burnbook.model.request.ComentarioRequest
 import com.example.burnbook.model.response.ComentarioResponse
 import com.example.burnbook.topBar
-
+import com.example.burnbook.viewmodel.ComentarioState
+import com.example.burnbook.viewmodel.ComentarioViewModel
 
 @Composable
 fun PaginaComentarios(
@@ -39,36 +34,16 @@ fun PaginaComentarios(
 ) {
     var isDarkMode by remember { mutableStateOf(false) }
 
-    val comentariosFake = listOf(
-        ComentarioResponse(
-            1,
-            "Ana_Silva",
-            null,
-            "Nossa, eu também estou assim hoje! 😫",
-            "12/10/2025 09:30"
-        ),
-        ComentarioResponse(
-            2,
-            "Joao_Dev",
-            null,
-            "Força, o final de semana está chegando!",
-            "12/10/2025 10:15"
-        ),
-        ComentarioResponse(
-            3,
-            "Burner_01",
-            null,
-            "Essa empresa acaba com a gente kkk",
-            "12/10/2025 11:00"
-        ),
-        ComentarioResponse(
-            4,
-            "Café_Lovers",
-            null,
-            "Um café resolve tudo (ou quase tudo).",
-            "12/10/2025 11:20"
-        )
-    )
+
+    val state by viewModel.comentariosState.collectAsState()
+
+
+    var textoComentario by remember { mutableStateOf("") }
+
+
+    LaunchedEffect(publicacaoId) {
+        viewModel.carregarComentarios(publicacaoId)
+    }
 
     Scaffold(
         topBar = { topBar(isDarkMode, onToggle = { isDarkMode = !isDarkMode }) },
@@ -81,16 +56,58 @@ fun PaginaComentarios(
                 .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+
             Box(modifier = Modifier.weight(1f)) {
-                ListaDeComentarios(
-                    isDarkMode = isDarkMode,
-                    comentarios = comentariosFake
-                )
+                when (val s = state) {
+
+
+                    is ComentarioState.Loading -> {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.Center),
+                            color = Color(0xFFF65B75)
+                        )
+                    }
+
+
+                    is ComentarioState.Sucesso -> {
+                        ListaDeComentarios(
+                            isDarkMode = isDarkMode,
+                            comentarios = s.comentarios
+                        )
+                    }
+
+
+                    is ComentarioState.Erro -> {
+                        Text(
+                            text = s.mensagem,
+                            color = Color.Red,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(16.dp)
+                        )
+                    }
+                }
             }
 
-            BarraInputComentario(onClick = {
-                navController.navigate("tela_comentar")
-            })
+            BarraInputComentario(
+                isDarkMode = isDarkMode,
+                texto = textoComentario,
+                onTextoChange = { textoComentario = it },
+                onEnviar = {
+                    if (textoComentario.isNotBlank()) {
+                        viewModel.comentar(
+                            ComentarioRequest(
+                                publicacaoId = publicacaoId,
+                                comentarioPaiId = null,
+                                conteudo = textoComentario
+                            ),
+                            publicacaoId
+                        )
+                        textoComentario = ""
+                    }
+                }
+            )
         }
     }
 }
@@ -102,9 +119,7 @@ fun ListaDeComentarios(isDarkMode: Boolean, comentarios: List<ComentarioResponse
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-
         item { PostPrincipalCard(isDarkMode) }
-
 
         items(comentarios) { comentario ->
             ItemComentarioAPI(comentario, isDarkMode)
@@ -120,7 +135,6 @@ fun ItemComentarioAPI(comentario: ComentarioResponse, isDarkMode: Boolean) {
             .padding(horizontal = 16.dp)
             .height(IntrinsicSize.Min)
     ) {
-
         Box(
             modifier = Modifier
                 .padding(start = 14.dp)
@@ -142,7 +156,6 @@ fun ItemComentarioAPI(comentario: ComentarioResponse, isDarkMode: Boolean) {
             elevation = CardDefaults.cardElevation(2.dp)
         ) {
             Column(modifier = Modifier.padding(12.dp)) {
-
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Default.Person,
@@ -175,7 +188,6 @@ fun ItemComentarioAPI(comentario: ComentarioResponse, isDarkMode: Boolean) {
                     color = if (isDarkMode) Color.Gray else Color(0xFFEEEEEE)
                 )
 
-
                 Text(
                     text = comentario.conteudo,
                     fontSize = 13.sp,
@@ -187,7 +199,6 @@ fun ItemComentarioAPI(comentario: ComentarioResponse, isDarkMode: Boolean) {
         }
     }
 }
-
 
 @Composable
 fun PostPrincipalCard(isDarkMode: Boolean) {
@@ -208,9 +219,21 @@ fun PostPrincipalCard(isDarkMode: Boolean) {
                     tint = if (isDarkMode) Color.White else Color.Black
                 )
                 Spacer(Modifier.width(8.dp))
-                Text("@Emanuelle_Hostin", fontWeight = FontWeight.Medium, color = if (isDarkMode) Color.White else Color.Black, fontFamily = inter, fontSize = 15.sp)
+                Text(
+                    "@Emanuelle_Hostin",
+                    fontWeight = FontWeight.Medium,
+                    color = if (isDarkMode) Color.White else Color.Black,
+                    fontFamily = inter,
+                    fontSize = 15.sp
+                )
             }
-            Text("11/10/2025", fontSize = 12.sp, color = if (isDarkMode) Color.White else Color.Black, fontFamily = cinzel, fontWeight = FontWeight.SemiBold)
+            Text(
+                "11/10/2025",
+                fontSize = 12.sp,
+                color = if (isDarkMode) Color.White else Color.Black,
+                fontFamily = cinzel,
+                fontWeight = FontWeight.SemiBold
+            )
 
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 8.dp),
@@ -238,37 +261,67 @@ fun PostPrincipalCard(isDarkMode: Boolean) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
-fun BarraInputComentario(onClick: () -> Unit) {
+fun BarraInputComentario(
+    isDarkMode: Boolean,
+    texto: String,
+    onTextoChange: (String) -> Unit,
+    onEnviar: () -> Unit
+) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = Color.White,
+        color = if (isDarkMode) Color(0xFF2C2C2C) else Color.White,
         tonalElevation = 2.dp
     ) {
         Row(
             modifier = Modifier
-                .clickable { onClick() }
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .padding(horizontal = 12.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-                tint = Color.Black
-            )
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .background(
+                        color = if (isDarkMode) Color(0xFF3C3C3C) else Color(0xFFF2F2F2),
+                        shape = RoundedCornerShape(20.dp)
+                    )
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                if (texto.isEmpty()) {
+                    Text(
+                        text = "Adicionar comentário... Seja gentil!",
+                        color = Color.Gray,
+                        fontSize = 13.sp,
+                        fontFamily = inter
+                    )
+                }
+                androidx.compose.foundation.text.BasicTextField(
+                    value = texto,
+                    onValueChange = onTextoChange,
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = androidx.compose.ui.text.TextStyle(
+                        fontSize = 13.sp,
+                        color = if (isDarkMode) Color.White else Color.Black,
+                        fontFamily = inter
+                    )
+                )
+            }
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(8.dp))
 
-            Text(
-                text = "Adicionar comentário a essa publicação. Seja gentil!",
-                color = Color.Gray,
-                fontSize = 12.sp,
-                fontFamily = inter,
-                fontWeight = FontWeight.Medium
-            )
+            IconButton(
+                onClick = onEnviar,
+                enabled = texto.isNotBlank()
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Send,
+                    contentDescription = "Enviar comentário",
+                    tint = if (texto.isNotBlank()) Color(0xFFF65B75) else Color.Gray
+                )
+            }
         }
     }
 }

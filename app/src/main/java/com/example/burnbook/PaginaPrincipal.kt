@@ -12,23 +12,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -51,7 +46,6 @@ import com.example.burnbook.model.response.PublicacaoResponse
 import com.example.burnbook.viewmodel.FeedState
 import com.example.burnbook.viewmodel.FeedViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PaginaPrincipal(navController: NavController, viewModel: FeedViewModel) {
 
@@ -129,13 +123,16 @@ fun PaginaPrincipal(navController: NavController, viewModel: FeedViewModel) {
                             cardPost(
                                 isDarkMode = isDarkMode,
                                 publicacao = publicacao,
-                                onCurtir = { viewModel.curtir(publicacao.id) }
+                                onCurtir = { viewModel.curtir(publicacao.id) },
+                                // Navega para comentários passando o id da publicação
+                                onVerComentarios = {
+                                    navController.navigate("comentarios/${publicacao.id}")
+                                }
                             )
                         }
                     }
                 }
             }
-
         }
     }
 }
@@ -150,8 +147,6 @@ fun topBar(isDarkMode: Boolean, onToggle: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp)
-
-
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -165,14 +160,12 @@ fun topBar(isDarkMode: Boolean, onToggle: () -> Unit) {
                     fontSize = 30.sp,
                     fontFamily = JustMeFont
                 )
-
                 Text(
                     text = "BOOK",
                     color = Color.White,
                     fontSize = 25.sp,
                     fontFamily = JaquesShadow
                 )
-
             }
             IconButton(
                 onClick = onToggle,
@@ -188,15 +181,12 @@ fun topBar(isDarkMode: Boolean, onToggle: () -> Unit) {
                         .offset(y = 7.dp)
                 )
             }
-
         }
     }
-
 }
 
 @Composable
 fun bottomBar(isDarkMode: Boolean, navController: NavController) {
-
     Surface(
         color = if (isDarkMode) Color(0xFFDE425C) else Color(0xFFF65B75),
         modifier = Modifier
@@ -250,17 +240,23 @@ fun bottomBar(isDarkMode: Boolean, navController: NavController) {
                     modifier = Modifier.height(30.dp)
                 )
             }
-
         }
     }
 }
+
 @Composable
-fun cardPost(isDarkMode: Boolean, publicacao: PublicacaoResponse, onCurtir: () -> Unit) {
+fun cardPost(
+    isDarkMode: Boolean,
+    publicacao: PublicacaoResponse,
+    onCurtir: () -> Unit,
+    onVerComentarios: () -> Unit  // ← novo parâmetro
+) {
     Surface(
         color = Color.White,
         modifier = Modifier
             .fillMaxWidth()
-            .height(315.dp),
+            .height(315.dp)
+            .clickable { onVerComentarios() },  // ← clique em qualquer parte do card
         shape = RoundedCornerShape(10.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -292,8 +288,11 @@ fun cardPost(isDarkMode: Boolean, publicacao: PublicacaoResponse, onCurtir: () -
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
+                    // Botão de curtir — stopPropagation manual com clickable no IconButton
                     IconButton(
-                        onClick = onCurtir,
+                        onClick = {
+                            onCurtir()
+                        },
                         modifier = Modifier.size(30.dp)
                     ) {
                         Icon(
@@ -314,15 +313,18 @@ fun cardPost(isDarkMode: Boolean, publicacao: PublicacaoResponse, onCurtir: () -
                         fontFamily = CinzelBold
                     )
 
+                    // Ícone de comentários — também navega ao clicar
                     Icon(
                         painter = painterResource(id = R.drawable.icone_comentarios),
                         contentDescription = "Ícone de comentários",
                         tint = Color.Unspecified,
-                        modifier = Modifier.height(20.dp)
+                        modifier = Modifier
+                            .height(20.dp)
+                            .clickable { onVerComentarios() }
                     )
-
                 }
             }
+
             HorizontalDivider(
                 modifier = Modifier
                     .padding(vertical = 8.dp)
@@ -352,7 +354,7 @@ fun cardPost(isDarkMode: Boolean, publicacao: PublicacaoResponse, onCurtir: () -
 
 
 val JustMeFont = FontFamily(Font(R.font.justmeagaindownhere_regular))
-val JaquesShadow = FontFamily(Font(R.font.jacquesfrancoisshadow_regular))
-val Cinzel = FontFamily(Font(R.font.cinzel))
-val CinzelBold = FontFamily(Font(R.font.cinzel_bold))
-val inter = FontFamily(Font(R.font.inter))
+val JaquesShadow = FontFamily(androidx.compose.ui.text.font.Font(R.font.jacquesfrancoisshadow_regular))
+val Cinzel = FontFamily(androidx.compose.ui.text.font.Font(R.font.cinzel))
+val CinzelBold = FontFamily(androidx.compose.ui.text.font.Font(R.font.cinzel_bold))
+val inter = FontFamily(androidx.compose.ui.text.font.Font(R.font.inter))

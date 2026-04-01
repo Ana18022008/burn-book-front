@@ -1,24 +1,19 @@
 package com.example.burnbook
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import com.example.burnbook.ui.theme.BurnBookTheme
 import androidx.navigation.compose.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.burnbook.api.AuthApi
 import com.example.burnbook.api.CategoriaApi
@@ -55,6 +50,7 @@ class MainActivity : ComponentActivity() {
                 val tokenDataStore = remember { TokenDataStore(context) }
                 val token by tokenDataStore.getToken().collectAsState(initial = null)
                 val retrofit = remember { RetrofitInstance.create(tokenDataStore) }
+
                 val factory = remember {
                     AppViewModelFactory(
                         authRepository       = AuthRepository(retrofit.create(AuthApi::class.java), tokenDataStore),
@@ -65,6 +61,7 @@ class MainActivity : ComponentActivity() {
                         comentarioRepository = ComentarioRepository(retrofit.create(ComentarioApi::class.java))
                     )
                 }
+
                 val authViewModel: AuthViewModel = viewModel(factory = factory)
                 val feedViewModel: FeedViewModel = viewModel(factory = factory)
                 val perfilViewModel: PerfilViewModel = viewModel(factory = factory)
@@ -78,24 +75,29 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-
                 NavHost(navController = navController, startDestination = "inicial") {
                     composable("inicial")   { PaginaInicial(navController) }
+
+
                     composable("login")     { PaginaLogin(navController, authViewModel) }
-                    composable("cadastro")  { PaginaCadastro(navController) }
+
+
+                    composable("cadastro")  { PaginaCadastro(navController, authViewModel) }
+
                     composable("principal") { PaginaPrincipal(navController, feedViewModel) }
                     composable("usuario")   {
                         PaginaUsuario(navController, perfilViewModel, 153L)
                     }
                     composable("postsUser") { PaginaPostsUsuario(navController) }
                     composable("post")      { PaginaCriacaoBlog(navController) }
-                    composable("comentarios") {
-                        PaginaComentarios(navController, comentarioViewModel, 102L)
+
+
+                    composable("comentarios/{publicacaoId}") { backStackEntry ->
+                        val publicacaoId = backStackEntry.arguments?.getString("publicacaoId")?.toLongOrNull() ?: return@composable
+                        PaginaComentarios(navController, comentarioViewModel, publicacaoId)
                     }
                 }
-
             }
-
         }
     }
 }
